@@ -20,6 +20,9 @@ public class Player{
     private float g;
     private float stateTime;
     private float floor;
+    private float bearS;
+    private boolean tr;
+    private boolean tl;
 
     public Player(float X, float Y){
 
@@ -32,21 +35,30 @@ public class Player{
         bear.setPosition(bearX, bearY);
         rectBear = new Rectangle( bear.getX(), bear.getY(), bear.getWidth(), bear.getHeight());
 
+        bearS = 75;
         bearV = 0;
         bearX = X;
         bearY = Y;
         g=-750;
         jump = false;
         bearFace=false;
+        tr=false;
+        tl=false;
 
     }
 
-    public float getX(){ return bearX; }
-    public float getY(){ return bearY; }
+    public float getX(){ return rectBear.getX(); }
+    public float getY(){ return rectBear.getY(); }
+    public float getV() { return bearV; }
     public Rectangle getRectangle() { return rectBear; }
     public boolean getFace(){ return bearFace; }
     public void setX(float X){bearX = X;}
     public void setY(float Y){bearY = Y;}
+    public float getS() { return bearS; }
+    public void setV(float V){bearV = V;}
+    public void setJump(boolean j){jump = j;}
+    public void setTR(boolean t) {tr = t;}
+    public void setTL(boolean t) {tl = t;}
 
     public float getRightX(){ return bearX + rectBear.getWidth();}
     public float getLeftX(){ return bearX; }
@@ -73,19 +85,19 @@ public class Player{
         else floor=0;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;
-            bearX += (75) * delta;
-            if (jump) bearX+=200*delta;
+            if (jump && !tr) bearX+=250*delta;
+            else bearX += (bearS) * delta;
             bearFace = false;
         }
         else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             stateTime += delta;
-            bearX += (-75) * delta;
-            if (jump) bearX-=200*delta;
+            if (jump && !tl) bearX-=250*delta;
+            else bearX += (-bearS) * delta;
             bearFace = true;
             }
         if  (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !jump) {
             jump=true;
-            bearV+=250;
+            bearV+=20000 * delta;
         }
         gravity(delta);
         if (bearY<=floor) {

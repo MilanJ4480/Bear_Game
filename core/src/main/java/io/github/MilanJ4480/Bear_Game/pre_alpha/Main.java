@@ -6,11 +6,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.Color;
 
 import java.awt.*;
 
@@ -23,6 +25,7 @@ public class Main extends ApplicationAdapter {
     //Classes
     private Player player;
     private Entity entity;
+    private Background bgGround;
 
 
     //Textures
@@ -32,7 +35,7 @@ public class Main extends ApplicationAdapter {
 
 
     //Rectangles
-    private Rectangle rectGround;
+    private ShapeRenderer shapeRenderer;
 
     //Basic Variables
     private float worldWidth;
@@ -49,15 +52,16 @@ public class Main extends ApplicationAdapter {
         worldWidth = 640;
         worldHeight = 360;
         viewport = new FitViewport(worldWidth, worldHeight, camera);
+        shapeRenderer = new ShapeRenderer();
 
         background = new Texture("white.png");
         log = new Texture("log.png");
 
         ground = new Texture("ground.png");
-        rectGround = new Rectangle(0, 0, ground.getWidth(), ground.getHeight());
+        bgGround = new Background(ground, 0, 0, 1, 1, true);
 
         player=new Player(50, ground.getHeight());
-        entity=new Entity(log, 75, 0, 1, 1);
+        entity=new Entity(log, 150, 0, 3, 3);
 
     }
 
@@ -65,7 +69,13 @@ public class Main extends ApplicationAdapter {
         viewport.update(width, height, true);
     }
 
-
+    public void hitbox(float x, float y, float w, float h){
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED); // Choose a color for visibility
+        shapeRenderer.rect(x, y, w, h);
+        shapeRenderer.end();
+    }
 
     float stateTime = 0f;
     @Override
@@ -75,19 +85,24 @@ public class Main extends ApplicationAdapter {
 
         float delta = Gdx.graphics.getDeltaTime();
 
-        player.update(rectGround, delta);
-        entity.update(delta, player, ground.getHeight(), player.getFace());
+        player.update(bgGround.getRectangle(), delta);
+        entity.update(delta, player, bgGround.getY() + bgGround.getHeight(), player.getFace());
 
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
+
         batch.begin();
 
-        batch.draw(ground, 0, 0);
+//        batch.draw(ground, 0, 0);
         player.render(batch);
         entity.render(batch);
+        bgGround.render(batch);
 
         batch.end();
+
+        hitbox(player.getX(), player.getY(), player.getRectangle().getWidth(), player.getRectangle().getHeight());
+        hitbox(entity.getRectangle().getX(), entity.getRectangle().getY(), entity.getRectangle().getWidth(), entity.getRectangle().getHeight());
     }
 
     @Override

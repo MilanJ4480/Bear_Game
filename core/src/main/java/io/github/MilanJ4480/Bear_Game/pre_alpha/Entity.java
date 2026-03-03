@@ -36,8 +36,11 @@ public class Entity {
         floor=0;
 
         entity.setPosition(x, y);
-        entity.setScale(w, h);
+        entity.setSize(entity.getWidth()*w, entity.getHeight()*h);
+        hitbox.setSize(entity.getWidth(), entity.getHeight());
     }
+
+    public Rectangle getRectangle() { return hitbox; }
 
     private void gravity(float delta, float floor){
         if (y<floor){
@@ -52,19 +55,38 @@ public class Entity {
 
     public void update(float delta, Player player, float floor, boolean face) {
         if (hitbox.overlaps(player.getRectangle())) {
-            if (player.getCenter()>hitbox.getX()) {
-                x -= 250 * delta;
+            if (player.getY() >= hitbox.getY()) {
+                player.setV(0);
+                player.setJump(false);
+                player.setY(hitbox.getY()+hitbox.getHeight()-1);
             }
-            else {
-                x += 250 * delta;
+            else if (player.getCenter()>hitbox.getX()+(hitbox.getWidth()/2)) {
+                x -= ((player.getS()*delta)+(1*delta)) + ((y-floor) * delta * player.getS());
+                if (player.getLeftX()+5<hitbox.getX()+hitbox.getWidth()) y += 128 * delta;
+                else {
+                    y = floor;
+//                    x = player.getLeftX()-hitbox.getWidth()+(2*delta);
+                }
+                player.setTL(true);
             }
-            y += 128 * delta;
+            else if (player.getCenter()<hitbox.getX()+(hitbox.getWidth()/2)) {
+                x += ((player.getS()*delta)+(1*delta)) + ((y-floor) * delta * player.getS());
+                if (player.getRightX()-5>hitbox.getX()) y += 128 * delta;
+                else {
+                    y = floor;
+//                    x = player.getRightX()-(2*delta);
+                }
+                player.setTR(true);
+            }
+//            y += 128 * delta;
         }
         else {
             this.floor = floor;
             gravity(delta, this.floor);
         }
         if (y==this.floor) v=0;
+        player.setTL(false);
+        player.setTR(false);
 
         entity.setPosition(x, y);
         hitbox.setPosition(x, y);
