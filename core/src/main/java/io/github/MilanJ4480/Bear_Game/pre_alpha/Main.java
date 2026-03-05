@@ -2,16 +2,13 @@ package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.Color;
 
 import java.awt.*;
@@ -26,15 +23,17 @@ public class Main extends ApplicationAdapter {
     private Player player;
     private Entity entity;
     private Background bgGround;
+    private Background rock;
 
 
     //Textures
     private Texture background;
     private Texture ground;
     private Texture log;
+    private Texture Rock;
 
 
-    //Rectangles
+    //Hitbox
     private ShapeRenderer shapeRenderer;
 
     //Basic Variables
@@ -56,12 +55,14 @@ public class Main extends ApplicationAdapter {
 
         background = new Texture("white.png");
         log = new Texture("log.png");
+        Rock = new Texture("rock.png");
 
         ground = new Texture("ground.png");
         bgGround = new Background(ground, 0, 0, 1, 1, true);
+        rock = new Background(Rock, 150, bgGround.getHeight(), 2, 2, false);
 
         player=new Player(50, ground.getHeight());
-        entity=new Entity(log, 150, 0, 3, 3);
+        entity=new Entity(log, 150, 0, 4, 4);
 
     }
 
@@ -86,7 +87,7 @@ public class Main extends ApplicationAdapter {
         float delta = Gdx.graphics.getDeltaTime();
 
         player.update(bgGround.getRectangle(), delta);
-        entity.update(delta, player, bgGround.getY() + bgGround.getHeight(), player.getFace());
+        entity.update(delta, bgGround.getRectangle(), player, player.getFace());
 
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
@@ -95,14 +96,16 @@ public class Main extends ApplicationAdapter {
         batch.begin();
 
 //        batch.draw(ground, 0, 0);
+        bgGround.render(batch);
+        rock.render(batch);
         player.render(batch);
         entity.render(batch);
-        bgGround.render(batch);
 
         batch.end();
 
         hitbox(player.getX(), player.getY(), player.getRectangle().getWidth(), player.getRectangle().getHeight());
         hitbox(entity.getRectangle().getX(), entity.getRectangle().getY(), entity.getRectangle().getWidth(), entity.getRectangle().getHeight());
+        hitbox(bgGround.getX(), bgGround.getY(),  bgGround.getRectangle().getWidth(), bgGround.getRectangle().getHeight());
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
+import sun.awt.windows.WPrinterJob;
 
 import java.awt.*;
 
@@ -30,7 +31,7 @@ public class Entity {
         this.y = y;
         this.w = w;
         this.h = h;
-        this.g = -750;
+        this.g = -1000;
         this.v=0;
 
         floor=0;
@@ -43,7 +44,7 @@ public class Entity {
     public Rectangle getRectangle() { return hitbox; }
 
     private void gravity(float delta, float floor){
-        if (y<floor){
+        if (y<=floor){
             y = floor;
         }
         else{
@@ -53,38 +54,34 @@ public class Entity {
         }
     }
 
-    public void update(float delta, Player player, float floor, boolean face) {
+    public void update(float delta, Rectangle ground, Player player, boolean face) {
+        if (hitbox.overlaps(ground)) floor = ground.getY()+ground.getHeight()-1;
+        else floor=0;
         if (hitbox.overlaps(player.getRectangle())) {
-            if (player.getY() >= hitbox.getY()) {
+            if (player.getY() >= hitbox.getY()+hitbox.getHeight() || (player.getY() > hitbox.getY() && (player.getLeftX()<hitbox.getX()+hitbox.getWidth() || player.getRightX()-5>hitbox.getX()))){
+                player.doGravity(false);
                 player.setV(0);
                 player.setJump(false);
-                player.setY(hitbox.getY()+hitbox.getHeight()-1);
+                player.setY(hitbox.getY()+hitbox.getHeight());
+//                System.out.println("On Top");
             }
             else if (player.getCenter()>hitbox.getX()+(hitbox.getWidth()/2)) {
-                x -= ((player.getS()*delta)+(1*delta)) + ((y-floor) * delta * player.getS());
-                if (player.getLeftX()+5<hitbox.getX()+hitbox.getWidth()) y += 128 * delta;
-                else {
-                    y = floor;
-//                    x = player.getLeftX()-hitbox.getWidth()+(2*delta);
-                }
+                x -= ((player.getS()*delta)+(1*delta)); //+ ((y-floor) * delta * player.getS());
+                if (player.getLeftX()+5<hitbox.getX()+hitbox.getWidth()) y += 236 * delta;
                 player.setTL(true);
+                //player.doGravity(true);
             }
             else if (player.getCenter()<hitbox.getX()+(hitbox.getWidth()/2)) {
-                x += ((player.getS()*delta)+(1*delta)) + ((y-floor) * delta * player.getS());
-                if (player.getRightX()-5>hitbox.getX()) y += 128 * delta;
-                else {
-                    y = floor;
-//                    x = player.getRightX()-(2*delta);
-                }
+                x += ((player.getS()*delta)+(1*delta)); //+ ((y-floor) * delta * player.getS());
+                if (player.getRightX()-5>hitbox.getX()) y += 236 * delta;
                 player.setTR(true);
+                //player.doGravity(true);
             }
-//            y += 128 * delta;
         }
-        else {
-            this.floor = floor;
-            gravity(delta, this.floor);
-        }
-        if (y==this.floor) v=0;
+        else player.doGravity(true);
+        gravity(delta, floor);
+
+        if (y==floor) v=0;
         player.setTL(false);
         player.setTR(false);
 

@@ -23,6 +23,7 @@ public class Player{
     private float bearS;
     private boolean tr;
     private boolean tl;
+    private boolean doG;
 
     public Player(float X, float Y){
 
@@ -44,6 +45,7 @@ public class Player{
         bearFace=false;
         tr=false;
         tl=false;
+        doG=true;
 
     }
 
@@ -55,10 +57,12 @@ public class Player{
     public void setX(float X){bearX = X;}
     public void setY(float Y){bearY = Y;}
     public float getS() { return bearS; }
+
     public void setV(float V){bearV = V;}
     public void setJump(boolean j){jump = j;}
     public void setTR(boolean t) {tr = t;}
     public void setTL(boolean t) {tl = t;}
+    public void doGravity(boolean G) { doG = G; }
 
     public float getRightX(){ return bearX + rectBear.getWidth();}
     public float getLeftX(){ return bearX; }
@@ -99,7 +103,7 @@ public class Player{
             jump=true;
             bearV+=20000 * delta;
         }
-        gravity(delta);
+        if(doG) gravity(delta);
         if (bearY<=floor) {
             jump = false;
             bearV=0;
