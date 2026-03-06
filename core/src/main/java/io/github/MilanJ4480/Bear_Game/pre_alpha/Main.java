@@ -86,8 +86,8 @@ public class Main extends ApplicationAdapter {
 
         float delta = Gdx.graphics.getDeltaTime();
 
-        player.update(bgGround.getRectangle(), delta);
-        entity.update(delta, bgGround.getRectangle(), player, player.getFace());
+        player.update(bgGround.getPolygon(), delta);
+        entity.update(delta, bgGround.getPolygon(), player, player.getFace());
 
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
@@ -103,9 +103,9 @@ public class Main extends ApplicationAdapter {
 
         batch.end();
 
-        hitbox(player.getX(), player.getY(), player.getRectangle().getWidth(), player.getRectangle().getHeight());
-        hitbox(entity.getRectangle().getX(), entity.getRectangle().getY(), entity.getRectangle().getWidth(), entity.getRectangle().getHeight());
-        hitbox(bgGround.getX(), bgGround.getY(),  bgGround.getRectangle().getWidth(), bgGround.getRectangle().getHeight());
+        hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        hitbox(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
+        hitbox(bgGround.getX(), bgGround.getY(),  bgGround.getWidth(), bgGround.getHeight());
     }
 
     @Override

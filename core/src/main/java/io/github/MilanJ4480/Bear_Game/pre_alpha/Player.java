@@ -3,6 +3,8 @@ package io.github.MilanJ4480.Bear_Game.pre_alpha;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Player{
@@ -10,7 +12,8 @@ public class Player{
     private TextureAtlas bearWalk1Atlas;
     private Animation<TextureRegion> bearWalk1;
     private Sprite bear;
-    private Rectangle rectBear;
+//    private Rectangle rectBear;
+    private Polygon polyBear;
 
     private float bearX;
     private float bearY;
@@ -34,7 +37,15 @@ public class Player{
         bear = new Sprite( bearWalk1.getKeyFrame(0));
         bear.setScale(1, 1);
         bear.setPosition(bearX, bearY);
-        rectBear = new Rectangle( bear.getX(), bear.getY(), bear.getWidth(), bear.getHeight());
+//        rectBear = new Rectangle( bear.getX(), bear.getY(), bear.getWidth(), bear.getHeight());
+        float[] vertices = new float[] {
+            0, 0,
+            bear.getWidth(), 0,
+            bear.getWidth(), bear.getHeight(),
+            0, bear.getHeight()
+        };
+        polyBear = new Polygon(vertices);
+        polyBear.setPosition(X,Y);
 
         bearS = 75;
         bearV = 0;
@@ -49,14 +60,16 @@ public class Player{
 
     }
 
-    public float getX(){ return rectBear.getX(); }
-    public float getY(){ return rectBear.getY(); }
+    public float getX(){ return polyBear.getX(); }
+    public float getY(){ return polyBear.getY(); }
     public float getV() { return bearV; }
-    public Rectangle getRectangle() { return rectBear; }
+    public Polygon getPolygon() { return polyBear; }
     public boolean getFace(){ return bearFace; }
     public void setX(float X){bearX = X;}
     public void setY(float Y){bearY = Y;}
     public float getS() { return bearS; }
+    public float getWidth() { return polyBear.getBoundingRectangle().getWidth();}
+    public float getHeight() { return polyBear.getBoundingRectangle().getHeight();}
 
     public void setV(float V){bearV = V;}
     public void setJump(boolean j){jump = j;}
@@ -64,9 +77,9 @@ public class Player{
     public void setTL(boolean t) {tl = t;}
     public void doGravity(boolean G) { doG = G; }
 
-    public float getRightX(){ return bearX + rectBear.getWidth();}
+    public float getRightX(){ return bearX + polyBear.getBoundingRectangle().getWidth();}
     public float getLeftX(){ return bearX; }
-    public float getCenter() { return bearX + rectBear.getWidth() / 2;}
+    public float getCenter() { return bearX + polyBear.getBoundingRectangle().getWidth() / 2;}
 
     private void gravity(float delta){
         if (bearY<floor){
@@ -84,8 +97,8 @@ public class Player{
         else if  (!bearFace && !region.isFlipX()) region.flip(true, false);
     }
 
-    public void update(Rectangle rectGround, float delta) {
-        if (rectBear.overlaps(rectGround)) floor=rectGround.getHeight()-5;
+    public void update(Polygon ground, float delta) {
+        if (Intersector.overlapConvexPolygons(polyBear, ground)) floor=ground.getBoundingRectangle().getHeight()-5;
         else floor=0;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;
@@ -103,14 +116,14 @@ public class Player{
             jump=true;
             bearV+=20000 * delta;
         }
-        if(doG) gravity(delta);
+        if(doG || bearV>0) gravity(delta);
         if (bearY<=floor) {
             jump = false;
             bearV=0;
         }
 
         bear.setPosition(bearX, bearY);
-        rectBear.setPosition(bearX, bearY);
+        polyBear.setPosition(bearX, bearY);
     }
 
     public void render(SpriteBatch batch){
