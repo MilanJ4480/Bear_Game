@@ -22,6 +22,8 @@ public class Entity {
     private float h;
     private float g;
     private float v;
+    private float hv;
+    private float ha;
     private float floor;
 
     public Entity(Texture texture, float x, float y, float w, float h) {
@@ -30,6 +32,8 @@ public class Entity {
         this.y = y;
         this.g = -1000;
         this.v=0;
+        this.hv=0;
+        this.ha=0;
 
         floor=0;
 
@@ -66,32 +70,47 @@ public class Entity {
         }
     }
 
+    private void horizontalVelocity(float delta, boolean g){
+        if (x<=0 || g) ha = 100;
+        else ha = 10;
+        System.out.println(hv);
+        if(hv<-0.1) hv+=ha*delta;
+        else if (hv>0.1) hv-=ha*delta;
+        else hv = 0;
+        x+=hv*delta;
+    }
+
     public void update(float delta, Polygon ground, Player player, boolean face) {
         float H = ground.getBoundingRectangle().getHeight();
         if (Intersector.overlapConvexPolygons(hitbox, ground)) floor = ground.getY()+H-1;
         else floor=0;
         if (Intersector.overlapConvexPolygons(player.getPolygon(), hitbox, mtv)) {
-            if (player.getY() >= hitbox.getY()+h || (player.getY() > hitbox.getY() && (player.getLeftX()<hitbox.getX()+w || player.getRightX()-5>hitbox.getX()))){
+            if (player.getY() >= hitbox.getY()+h || mtv.normal.y>0.1) { //(player.getLeftX()<hitbox.getX()+w || player.getRightX()-5>hitbox.getX()))){
                 player.doGravity(false);
                 player.setV(0);
                 player.setJump(false);
 //                player.setY(hitbox.getY()+h);
 //                System.out.println("On Top");
             }
-            if (mtv.normal.x > 0.1){//(player.getCenter()>hitbox.getX()+(w/2)) {
+            else if (mtv.normal.x > 0.1){//(player.getCenter()>hitbox.getX()+(w/2)) {
                 x -= mtv.depth; //((player.getS()*delta)+(1*delta)); //+ ((y-floor) * delta * player.getS());
-                if (player.getLeftX()+5<hitbox.getX()+w) y += 236 * delta;
+//                if (player.getLeftX()+5<hitbox.getX()+w) y += 236 * delta;
                 player.setTL(true);
+                hv = -player.getS();
                 //player.doGravity(true);
             }
-            else {//if (player.getCenter()<hitbox.getX()+(w/2)) {
+            else if (mtv.normal.x < 0.1){//if (player.getCenter()<hitbox.getX()+(w/2)) {
                 x += mtv.depth;//((player.getS()*delta)+(1*delta)); //+ ((y-floor) * delta * player.getS());
-                if (player.getRightX()-5>hitbox.getX()) y += 236 * delta;
+//                if (player.getRightX()-5>hitbox.getX()) y += 236 * delta;
                 player.setTR(true);
+                hv = player.getS();
                 //player.doGravity(true);
             }
         }
-        else player.doGravity(true);
+        else{
+            player.doGravity(true);
+        }
+        horizontalVelocity(delta, Intersector.overlapConvexPolygons(ground, hitbox));
         gravity(delta, floor);
 
         if (y==floor) v=0;
@@ -106,8 +125,8 @@ public class Entity {
         entity.draw(batch);
     }
 
-//    public void dispose() {
+    public void dispose() {
 //        texture.dispose();
-//    }
+    }
 
 }
