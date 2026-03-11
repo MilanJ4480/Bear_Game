@@ -87,8 +87,8 @@ public class Player{
         }
         else{
             bearV += g*delta;
-            bearY += bearV*delta;
-            if (bearY<floor) bearY = floor;
+            if (bearY + bearV*delta > floor) bearY += bearV * delta;
+            else bearY = floor;
         }
     }
 
@@ -97,19 +97,19 @@ public class Player{
         else if  (!bearFace && !region.isFlipX()) region.flip(true, false);
     }
 
-    public void update(Polygon ground, float delta) {
-        if (Intersector.overlapConvexPolygons(polyBear, ground)) floor=ground.getBoundingRectangle().getHeight()-5;
-        else floor=0;
+    public void update(float f, float delta) {
+//        if (Intersector.overlapConvexPolygons(polyBear, ground)) floor=ground.getBoundingRectangle().getHeight()-5;
+        floor = f;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;
-            if (jump && !tr) bearX+=250*delta;
-            else bearX += (bearS) * delta;
+//            if (jump && !tr) bearX+=250*delta;
+            bearX += (bearS) * delta;
             bearFace = false;
         }
         else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             stateTime += delta;
-            if (jump && !tl) bearX-=250*delta;
-            else bearX += (-bearS) * delta;
+//            if (jump && !tl) bearX-=250*delta;
+            bearX += (-bearS) * delta;
             bearFace = true;
             }
         if  (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !jump) {

@@ -80,10 +80,8 @@ public class Entity {
         x+=hv*delta;
     }
 
-    public void update(float delta, Polygon ground, Player player, boolean face) {
-        float H = ground.getBoundingRectangle().getHeight();
-        if (Intersector.overlapConvexPolygons(hitbox, ground)) floor = ground.getY()+H-1;
-        else floor=0;
+    public void update(float delta, float f, Player player, boolean face) {
+        floor = f;
         if (Intersector.overlapConvexPolygons(player.getPolygon(), hitbox, mtv)) {
             if (player.getY() >= hitbox.getY()+h || mtv.normal.y>0.1) { //(player.getLeftX()<hitbox.getX()+w || player.getRightX()-5>hitbox.getX()))){
                 player.doGravity(false);
@@ -110,7 +108,7 @@ public class Entity {
         else{
             player.doGravity(true);
         }
-        horizontalVelocity(delta, Intersector.overlapConvexPolygons(ground, hitbox));
+        horizontalVelocity(delta, hitbox.getY()<=floor);
         gravity(delta, floor);
 
         if (y==floor) v=0;

@@ -24,6 +24,7 @@ public class Main extends ApplicationAdapter {
     private Entity entity;
     private Background bgGround;
     private Background rock;
+    private ChunkManager chunkManager;
 
 
     //Textures
@@ -52,6 +53,7 @@ public class Main extends ApplicationAdapter {
         worldHeight = 360;
         viewport = new FitViewport(worldWidth, worldHeight, camera);
         shapeRenderer = new ShapeRenderer();
+        chunkManager = new ChunkManager();
 
         background = new Texture("white.png");
         log = new Texture("log.png");
@@ -86,8 +88,9 @@ public class Main extends ApplicationAdapter {
 
         float delta = Gdx.graphics.getDeltaTime();
 
-        player.update(bgGround.getPolygon(), delta);
-        entity.update(delta, bgGround.getPolygon(), player, player.getFace());
+        player.update(chunkManager.getFloor(player.getX(), player.getWidth(), player.getY()), delta);
+        entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player, player.getFace());
+        chunkManager.update(player.getX());
 
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
@@ -96,16 +99,17 @@ public class Main extends ApplicationAdapter {
         batch.begin();
 
 //        batch.draw(ground, 0, 0);
-        bgGround.render(batch);
+//        bgGround.render(batch);
         rock.render(batch);
         player.render(batch);
         entity.render(batch);
+        chunkManager.render(batch, player.getX());
 
         batch.end();
 
-        hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+//        hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         hitbox(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
-        hitbox(bgGround.getX(), bgGround.getY(),  bgGround.getWidth(), bgGround.getHeight());
+//        hitbox(bgGround.getX(), bgGround.getY(),  bgGround.getWidth(), bgGround.getHeight());
     }
 
     @Override
@@ -115,5 +119,6 @@ public class Main extends ApplicationAdapter {
         ground.dispose();
         player.dispose();
         log.dispose();
+        chunkManager.dispose();
     }
 }
