@@ -11,6 +11,7 @@ import java.util.Random;
 
 public class ChunkManager {
     TextureAtlas atlas;
+    TextureRegion[] rocks;
     TextureRegion[] layers;
     long seed;
 
@@ -20,11 +21,15 @@ public class ChunkManager {
     short biome;
 
     public ChunkManager(){
-        atlas = new TextureAtlas("layersAtlas/layers.atlas");
+        atlas = new TextureAtlas("atlas/atlas.atlas");
         seed = MathUtils.random(1, Long.MAX_VALUE);
         layers =  new TextureRegion[11];
         for(int i = 0; i < layers.length; i++){
             layers[i] = new TextureRegion(atlas.findRegion("ground"+(i+1)));
+        }
+        rocks = new TextureRegion[69];
+        for(int i = 0; i < rocks.length; i++){
+            rocks[i] = new TextureRegion(atlas.findRegion("rock"+(i+1)));
         }
         chunks = new Array<>();
 //        weight = new int[10][10];
@@ -52,7 +57,11 @@ public class ChunkManager {
     public void render(Batch batch, float playerX){
         for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=640) {
             for(int i = 0; i < chunk.layers.length; i++) {
-                batch.draw(layers[chunk.layers[i]], chunk.x, chunk.y+(16*i), chunk.w, 16);
+                batch.draw(layers[chunk.layers[i]], chunk.x, chunk.y + (16 * i), chunk.w, 16);
+            }
+            for(int j = 0; j < chunk.rocks.length; j++){
+                if(chunk.rocks[j]>=0 && chunk.rockFace[j]) batch.draw(rocks[chunk.rocks[j]], chunk.rocksX[j], chunk.getFloor(), rocks[chunk.rocks[j]].getRegionWidth()*chunk.rockScale[j], rocks[chunk.rocks[j]].getRegionHeight()*chunk.rockScale[j]);
+                else if(chunk.rocks[j]>=0 && !chunk.rockFace[j]) batch.draw(rocks[chunk.rocks[j]], chunk.rocksX[j], chunk.getFloor(), -rocks[chunk.rocks[j]].getRegionWidth()*chunk.rockScale[j], rocks[chunk.rocks[j]].getRegionHeight()*chunk.rockScale[j]);
             }
         }
     }

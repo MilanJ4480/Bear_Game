@@ -50,17 +50,18 @@ public class Weights {
         return layersReturn;
     }
 
-    public short getRocks(boolean prev) {
-        if(prev){
-            rock = (short) rand.nextInt(201);
-            if (rock>69) rock = -1;
-            else if (rock>65) rock = (short) rand.nextInt(201);
+    public short getRock() {
+        rock = (short) rand.nextInt(201);
+        if (rock>69) rock = -1;
+        else {
+            if (rock > 65) rock = (short) rand.nextInt(70);
+            if (rock > 65) rock = (short) rand.nextInt(70);
+            if (rock > 65) rock = (short) rand.nextInt(70);
         }
-        else{
-            rock = (short) rand.nextInt(70);
-            if (rock>65) rock = (short) rand.nextInt(70);
-        }
-
         return rock;
     }
+
+    public float randX(float x, float w) {return x+ rand.nextFloat()*w;}
+    public boolean randBool() {return rand.nextBoolean();}
+    public short randScale() {return (short) rand.nextInt(5); }
 }
