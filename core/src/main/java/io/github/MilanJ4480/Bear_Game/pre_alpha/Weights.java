@@ -54,9 +54,9 @@ public class Weights {
         rock = (short) rand.nextInt(201);
         if (rock>69) rock = -1;
         else {
-            if (rock > 65) rock = (short) rand.nextInt(70);
-            if (rock > 65) rock = (short) rand.nextInt(70);
-            if (rock > 65) rock = (short) rand.nextInt(70);
+            if (rock > 64) rock = (short) rand.nextInt(70);
+            if (rock > 64) rock = (short) rand.nextInt(70);
+            if (rock > 64) rock = (short) rand.nextInt(70);
         }
         return rock;
     }

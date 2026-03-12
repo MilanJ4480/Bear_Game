@@ -101,14 +101,14 @@ public class Main extends ApplicationAdapter {
 //        batch.draw(ground, 0, 0);
 //        bgGround.render(batch);
         chunkManager.render(batch, player.getX());
-        rock.render(batch);
+//        rock.render(batch);
         player.render(batch);
         entity.render(batch);
 
         batch.end();
 
 //        hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
-        hitbox(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
+//        hitbox(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
 //        hitbox(bgGround.getX(), bgGround.getY(),  bgGround.getWidth(), bgGround.getHeight());
     }
 

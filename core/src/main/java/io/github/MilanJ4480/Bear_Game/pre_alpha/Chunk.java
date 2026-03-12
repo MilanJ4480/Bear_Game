@@ -1,9 +1,5 @@
 package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-
-import java.util.Random;
-
 public class Chunk {
     float x;
     float y;
@@ -39,6 +35,7 @@ public class Chunk {
             rocksX[i] = weight.randX(x, w);
             rockFace[i] = weight.randBool();
             rockScale[i] = weight.randScale();
+            rockScale[i] = 2;
         }
 
     }
