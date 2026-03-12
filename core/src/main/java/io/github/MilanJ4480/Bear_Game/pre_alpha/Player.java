@@ -27,6 +27,7 @@ public class Player{
     private boolean tr;
     private boolean tl;
     private boolean doG;
+    private float jumpStrength;
 
     public Player(float X, float Y){
 
@@ -51,13 +52,13 @@ public class Player{
         bearV = 0;
         bearX = X;
         bearY = Y;
-        g=-750;
+        g=-10;
+        jumpStrength=505;
         jump = false;
         bearFace=false;
         tr=false;
         tl=false;
         doG=true;
-
     }
 
     public float getX(){ return polyBear.getX(); }
@@ -87,7 +88,7 @@ public class Player{
         }
         else{
             bearV += g*delta;
-            if (bearY + bearV*delta > floor) bearY += bearV * delta;
+            if (bearY + bearV*delta > floor) bearY += bearV;
             else bearY = floor;
         }
     }
@@ -100,6 +101,8 @@ public class Player{
     public void update(float f, float delta) {
 //        if (Intersector.overlapConvexPolygons(polyBear, ground)) floor=ground.getBoundingRectangle().getHeight()-5;
         floor = f;
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) bearS=175;
+        else bearS=75;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;
 //            if (jump && !tr) bearX+=250*delta;
@@ -114,7 +117,7 @@ public class Player{
             }
         if  (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !jump) {
             jump=true;
-            bearV+=20000 * delta;
+            bearV+=jumpStrength * delta;
         }
         if(doG || bearV>0) gravity(delta);
         if (bearY<=floor) {
