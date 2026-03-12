@@ -3,9 +3,7 @@ package io.github.MilanJ4480.Bear_Game.pre_alpha;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 
 import static java.lang.Math.sqrt;
 

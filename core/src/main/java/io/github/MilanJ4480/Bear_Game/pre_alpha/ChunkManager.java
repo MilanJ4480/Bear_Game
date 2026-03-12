@@ -5,9 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.util.Random;
 
 public class ChunkManager {
     TextureAtlas atlas;
@@ -48,7 +45,6 @@ public class ChunkManager {
     }
     public void update(float playerX){
         if (Math.abs(playerX)+640>chunks.get(chunks.size-1).x){
-            System.out.println("Chunk Generated");
             chunks.add(new Chunk(chunks.size, 11, biome, weight));
             biome = chunks.get(chunks.size-1).biome;
         }
