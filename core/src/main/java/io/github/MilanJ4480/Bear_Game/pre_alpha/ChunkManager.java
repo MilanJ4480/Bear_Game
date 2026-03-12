@@ -13,9 +13,11 @@ public class ChunkManager {
     TextureAtlas atlas;
     TextureRegion[] layers;
     long seed;
+
+    Weights weight;
+
     Array<Chunk> chunks;
-    float d;
-    int[][] weight;
+    short biome;
 
     public ChunkManager(){
         atlas = new TextureAtlas("layersAtlas/layers.atlas");
@@ -26,23 +28,11 @@ public class ChunkManager {
         }
         chunks = new Array<>();
 //        weight = new int[10][10];
-        weight = new int[][]{
-            new int[]{10},
-            new int[]{10},
-            new int[]{9},
-            new int[]{8},
-            new int[]{8},
-            new int[]{8},
-            new int[]{7},
-            new int[]{6},
-            new int[]{5},
-            new int[]{4},
-            new int[]{0, 1, 2, 3},
-        };
-        for(int i = 0; i < 10; i++) {
-            chunks.add(new Chunk(i, 11, seed, weight));
-        }
+        weight = new Weights(seed);
+        biome = 0;
+        chunks.add(new Chunk(0, 11, biome, weight));
     }
+
     public float getFloor(float x, float w, float y){
         for (Chunk chunk : chunks){
             if (chunk.getFloor()>y && (x>=chunk.x && x<=chunk.x+chunk.w || x+w>=chunk.x && x+w<=chunk.x+chunk.w)){
@@ -54,7 +44,8 @@ public class ChunkManager {
     public void update(float playerX){
         if (Math.abs(playerX)+640>chunks.get(chunks.size-1).x){
             System.out.println("Chunk Generated");
-            chunks.add(new Chunk(chunks.size, 11, seed, weight));
+            chunks.add(new Chunk(chunks.size, 11, biome, weight));
+            biome = chunks.get(chunks.size-1).biome;
         }
     }
 

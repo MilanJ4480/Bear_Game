@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 
+import static java.lang.Math.sqrt;
+
 public class Player{
 
     private TextureAtlas bearWalk1Atlas;
@@ -52,8 +54,8 @@ public class Player{
         bearV = 0;
         bearX = X;
         bearY = Y;
-        g=-10;
-        jumpStrength=505;
+        g=-750;
+        jumpStrength= (float) sqrt(2 * (g*-1) * 75);
         jump = false;
         bearFace=false;
         tr=false;
@@ -88,7 +90,7 @@ public class Player{
         }
         else{
             bearV += g*delta;
-            if (bearY + bearV*delta > floor) bearY += bearV;
+            if (bearY + bearV*delta > floor) bearY += bearV * delta;
             else bearY = floor;
         }
     }
@@ -117,7 +119,7 @@ public class Player{
             }
         if  (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !jump) {
             jump=true;
-            bearV+=jumpStrength * delta;
+            bearV+=jumpStrength;
         }
         if(doG || bearV>0) gravity(delta);
         if (bearY<=floor) {

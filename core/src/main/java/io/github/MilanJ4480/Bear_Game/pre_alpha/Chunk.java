@@ -11,19 +11,17 @@ public class Chunk {
     long seed;
     short[] layers;
     float w;
+    short biome;
 
-    public float getFloor(){
-        return h*16;
-    }
+    public float getFloor(){return h*16;}
 
-    Chunk(int n, int h, long seed, int[][] levels){
+    Chunk(int n, int h, short biome, Weights weight){
         this.h = h;
         this.seed = seed;
         Random rand = new Random(seed+n);
-        layers =  new short[h];
-        for (int i = 0; i < h; i++){
-            layers[i] = (short) levels[i][rand.nextInt(levels[i].length)];
-        }
+        layers = weight.getLayers(biome, n);
+        this.biome = layers[layers.length-1];
+
         w = 160;
         x = w*n;
         y = 0;

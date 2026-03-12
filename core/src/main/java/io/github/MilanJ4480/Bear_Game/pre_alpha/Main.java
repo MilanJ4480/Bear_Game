@@ -86,7 +86,7 @@ public class Main extends ApplicationAdapter {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         batch.setProjectionMatrix(camera.combined);
 
-        float delta = Gdx.graphics.getDeltaTime();
+        float delta = Math.min(Gdx.graphics.getDeltaTime(), 1f/30f);
 
         player.update(chunkManager.getFloor(player.getX(), player.getWidth(), player.getY()), delta);
         entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player, player.getFace());
