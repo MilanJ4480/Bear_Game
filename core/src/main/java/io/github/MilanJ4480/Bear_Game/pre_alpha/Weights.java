@@ -12,7 +12,7 @@ public class Weights {
     boolean[] background;
 
     short[] rocks;
-    short[] trees;
+    short[] plants;
 
     short biome;
     short rock;
@@ -59,6 +59,23 @@ public class Weights {
             if (rock > 64) rock = (short) rand.nextInt(70);
         }
         return rock;
+    }
+
+    public int getPlants(short biome) {
+        if (biome == 1) return 0;
+        else if (biome == 3) {
+            if (randBool()) return 7;
+            else {
+                if (randBool()) return 6;
+                else return 5;
+            }
+        }
+        else return rand.nextInt(9);
+    }
+    public int getPlantNum(short biome) {
+        if (biome == 1) return rand.nextInt(5);
+        else if  (biome == 3) return rand.nextInt(31-10)+10;
+        else return rand.nextInt(5);
     }
 
     public float randX(float x, float w) {return x+ rand.nextFloat()*w;}

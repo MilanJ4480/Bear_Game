@@ -10,6 +10,7 @@ public class ChunkManager {
     TextureAtlas atlas;
     TextureRegion[] rocks;
     TextureRegion[] layers;
+    TextureRegion[] plants;
     long seed;
 
     Weights weight;
@@ -20,14 +21,22 @@ public class ChunkManager {
     public ChunkManager(){
         atlas = new TextureAtlas("atlas/atlas.atlas");
         seed = MathUtils.random(1, Long.MAX_VALUE);
+
         layers =  new TextureRegion[11];
         for(int i = 0; i < layers.length; i++){
             layers[i] = new TextureRegion(atlas.findRegion("ground"+(i+1)));
         }
+
         rocks = new TextureRegion[69];
         for(int i = 0; i < rocks.length; i++){
             rocks[i] = new TextureRegion(atlas.findRegion("rock"+(i+1)));
         }
+
+        plants = new TextureRegion[9];
+        for(int i = 0; i < plants.length; i++){
+            plants[i] = new TextureRegion(atlas.findRegion("plants"+(i+1)));
+        }
+
         chunks = new Array<>();
 //        weight = new int[10][10];
         weight = new Weights(seed);
@@ -55,9 +64,21 @@ public class ChunkManager {
             for(int i = 0; i < chunk.layers.length; i++) {
                 batch.draw(layers[chunk.layers[i]], chunk.x, chunk.y + (16 * i), chunk.w, 16);
             }
+        }
+    }
+    public void renderRocks(Batch batch, float playerX){
+        for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=640) {
             for(int j = 0; j < chunk.rocks.length; j++){
                 if(chunk.rocks[j]>=0 && chunk.rockFace[j]) batch.draw(rocks[chunk.rocks[j]], chunk.rocksX[j], chunk.getFloor(), rocks[chunk.rocks[j]].getRegionWidth()*chunk.rockScale[j], rocks[chunk.rocks[j]].getRegionHeight()*chunk.rockScale[j]);
                 else if(chunk.rocks[j]>=0 && !chunk.rockFace[j]) batch.draw(rocks[chunk.rocks[j]], chunk.rocksX[j], chunk.getFloor(), -rocks[chunk.rocks[j]].getRegionWidth()*chunk.rockScale[j], rocks[chunk.rocks[j]].getRegionHeight()*chunk.rockScale[j]);
+            }
+        }
+    }
+    public void renderPlants(Batch batch, float playerX){
+        for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=640) {
+            for(int k = 0; k < chunk.plants.length; k++){
+                if (chunk.plantFace[k]) batch.draw(plants[chunk.plants[k]], chunk.plantsX[k], chunk.getFloor(), plants[chunk.plants[k]].getRegionWidth()+(0.25f*k), plants[chunk.plants[k]].getRegionHeight()+(0.25f*k));
+                else batch.draw(plants[chunk.plants[k]], chunk.plantsX[k], chunk.getFloor(), -plants[chunk.plants[k]].getRegionWidth()+(0.25f*k), plants[chunk.plants[k]].getRegionHeight()+(0.25f*k));
             }
         }
     }
