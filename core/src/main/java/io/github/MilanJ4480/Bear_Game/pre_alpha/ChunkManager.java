@@ -11,6 +11,7 @@ public class ChunkManager {
     TextureRegion[] rocks;
     TextureRegion[] layers;
     TextureRegion[] plants;
+    TextureRegion[] moss;
     long seed;
 
     Weights weight;
@@ -27,6 +28,11 @@ public class ChunkManager {
             layers[i] = new TextureRegion(atlas.findRegion("ground"+(i+1)));
         }
 
+        moss = new TextureRegion[10];
+        for(int i = 0; i < moss.length; i++){
+            moss[i] = new TextureRegion(atlas.findRegion("moss"+(i+1)));
+        }
+
         rocks = new TextureRegion[69];
         for(int i = 0; i < rocks.length; i++){
             rocks[i] = new TextureRegion(atlas.findRegion("rock"+(i+1)));
@@ -41,7 +47,7 @@ public class ChunkManager {
 //        weight = new int[10][10];
         weight = new Weights(seed);
         biome = 0;
-        chunks.add(new Chunk(0, 11, biome, weight));
+        chunks.add(new Chunk(chunks.size, 0, 11, biome, weight));
     }
 
     public float getFloor(float x, float w, float y){
@@ -52,9 +58,10 @@ public class ChunkManager {
         }
         return 0;
     }
+
     public void update(float playerX){
         if (Math.abs(playerX)+640>chunks.get(chunks.size-1).x){
-            chunks.add(new Chunk(chunks.size, 11, biome, weight));
+            chunks.add(new Chunk(chunks.size, chunks.get(chunks.size-1).n, 11, biome, weight));
             biome = chunks.get(chunks.size-1).biome;
         }
     }
@@ -66,6 +73,17 @@ public class ChunkManager {
             }
         }
     }
+
+    public void renderGround(Batch batch, float playerX){
+        for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=1280) {
+            if (chunk.ground!=-1){
+                if (chunk.biome==1){
+                    batch.draw(moss[chunk.ground], chunk.x, chunk.getFloor(), moss[chunk.ground].getRegionWidth(), moss[chunk.ground].getRegionHeight());
+                }
+            }
+        }
+    }
+
     public void renderRocks(Batch batch, float playerX){
         for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=640) {
             for(int j = 0; j < chunk.rocks.length; j++){

@@ -101,7 +101,7 @@ public class Player{
     public void update(float f, float delta) {
 //        if (Intersector.overlapConvexPolygons(polyBear, ground)) floor=ground.getBoundingRectangle().getHeight()-5;
         floor = f;
-        if (Gdx.input.isKeyPressed(Input.Keys.E)) bearS=175;
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) bearS=750;
         else bearS=75;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;

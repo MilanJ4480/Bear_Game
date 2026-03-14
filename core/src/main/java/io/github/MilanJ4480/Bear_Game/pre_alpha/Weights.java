@@ -41,7 +41,7 @@ public class Weights {
     public short[] getLayers(short prev, int n) {
         layersReturn = new short[11];
 
-        if (rand.nextInt(6) == 1) biome = biomes[rand.nextInt(biomes.length)];
+        if (n%4==0 && rand.nextInt(2) == 1) biome = biomes[rand.nextInt(biomes.length)];
         else biome = prev;
 
         for (int i = 0; i < layersReturn.length-1; i++) layersReturn[i] = layers[i][rand.nextInt(layers[i].length)];
@@ -51,7 +51,7 @@ public class Weights {
     }
 
     public int getGround(short biome){
-        if (biome==0) return rand.nextInt(11);
+        if (biome==1) return rand.nextInt(10);
         else return -1;
     }
 

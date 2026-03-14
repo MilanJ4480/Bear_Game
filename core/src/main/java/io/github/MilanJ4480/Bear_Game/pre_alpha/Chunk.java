@@ -23,22 +23,24 @@ public class Chunk {
 
     public float getFloor(){return h*16;}
 
-    Chunk(int n, int h, short biome, Weights weight){
+    Chunk(int chunkN, int n, int h, short biome, Weights weight){
         this.h = h;
         layers = weight.getLayers(biome, n);
         this.biome = layers[layers.length-1];
 
-        this.n = n;
-        if(this.biome!=biome) this.n=1;
+        this.n=n;
+
+
+        if(this.biome!=biome) this.n=0;
         else this.n+=1;
 
-        if(n%4==0){
-            ground = weight.getGround(biome);
+        if(this.n%4==0){
+            ground = weight.getGround(this.biome);
         }
-
+        else ground = -1;
 
         w = 160;
-        x = w*n;
+        x = w*chunkN;
         y = 0;
 
         rocks = new short[3];
