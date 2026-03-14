@@ -73,7 +73,6 @@ public class Entity {
     private void horizontalVelocity(float delta, boolean g){
         if (x<=0 || g) ha = 500;
         else ha = 10;
-        System.out.println(hv);
         if(hv<-0.1) hv+=ha*delta;
         else if (hv>0.1) hv-=ha*delta;
         else hv = 0;

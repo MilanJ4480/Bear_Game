@@ -50,6 +50,11 @@ public class Weights {
         return layersReturn;
     }
 
+    public int getGround(short biome){
+        if (biome==0) return rand.nextInt(11);
+        else return -1;
+    }
+
     public short getRock() {
         rock = (short) rand.nextInt(201);
         if (rock>69) rock = -1;
@@ -73,8 +78,8 @@ public class Weights {
         else return rand.nextInt(9);
     }
     public int getPlantNum(short biome) {
-        if (biome == 1) return rand.nextInt(5);
-        else if  (biome == 3) return rand.nextInt(31-10)+10;
+        if (biome == 1) return rand.nextInt(16-2)+2;
+        else if  (biome == 3) return rand.nextInt(21-10)+10;
         else return rand.nextInt(5);
     }
 

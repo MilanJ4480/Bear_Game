@@ -69,8 +69,8 @@ public class ChunkManager {
     public void renderRocks(Batch batch, float playerX){
         for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=640) {
             for(int j = 0; j < chunk.rocks.length; j++){
-                if(chunk.rocks[j]>=0 && chunk.rockFace[j]) batch.draw(rocks[chunk.rocks[j]], chunk.rocksX[j], chunk.getFloor(), rocks[chunk.rocks[j]].getRegionWidth()*chunk.rockScale[j], rocks[chunk.rocks[j]].getRegionHeight()*chunk.rockScale[j]);
-                else if(chunk.rocks[j]>=0 && !chunk.rockFace[j]) batch.draw(rocks[chunk.rocks[j]], chunk.rocksX[j], chunk.getFloor(), -rocks[chunk.rocks[j]].getRegionWidth()*chunk.rockScale[j], rocks[chunk.rocks[j]].getRegionHeight()*chunk.rockScale[j]);
+                if(chunk.rocks[j]>=0 && chunk.rockFace[j]) batch.draw(rocks[chunk.rocks[j]], chunk.rocksX[j], chunk.getFloor()-1, rocks[chunk.rocks[j]].getRegionWidth()*chunk.rockScale[j], rocks[chunk.rocks[j]].getRegionHeight()*chunk.rockScale[j]);
+                else if(chunk.rocks[j]>=0 && !chunk.rockFace[j]) batch.draw(rocks[chunk.rocks[j]], chunk.rocksX[j], chunk.getFloor()-1, -rocks[chunk.rocks[j]].getRegionWidth()*chunk.rockScale[j], rocks[chunk.rocks[j]].getRegionHeight()*chunk.rockScale[j]);
             }
         }
     }

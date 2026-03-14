@@ -6,6 +6,8 @@ public class Chunk {
     int h;
     float w;
     short biome;
+    int n;
+    int ground;
 
     short[] layers;
 
@@ -25,6 +27,15 @@ public class Chunk {
         this.h = h;
         layers = weight.getLayers(biome, n);
         this.biome = layers[layers.length-1];
+
+        this.n = n;
+        if(this.biome!=biome) this.n=1;
+        else this.n+=1;
+
+        if(n%4==0){
+            ground = weight.getGround(biome);
+        }
+
 
         w = 160;
         x = w*n;
