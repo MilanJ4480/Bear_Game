@@ -1,0 +1,103 @@
+package io.github.MilanJ4480.Bear_Game.pre_alpha;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Polygon;
+import java.util.Random;
+
+public class Enemy{
+    private Sprite entity;
+    private Polygon hitbox;
+    private Intersector.MinimumTranslationVector mtv;
+    private Random rand;
+
+    private float x;
+    private float y;
+    private float w;
+    private float h;
+    private float g;
+    private float v;
+    private float hv;
+    private float ha;
+    private float floor;
+    private boolean d;
+    private float s;
+
+    public Enemy(Texture texture, float x, float y, float w, float h) {
+        this.entity = new Sprite(texture);
+        this.x = x;
+        this.y = y;
+        this.g = -1000;
+        this.v=0;
+        this.hv=0;
+        this.ha=0;
+        s=100;
+
+        floor=0;
+
+        entity.setPosition(x, y);
+        entity.setSize(entity.getWidth()*w, entity.getHeight()*h);
+        float[] vertices = new float[] {
+            0, 0,
+            entity.getWidth(), 0,
+            entity.getWidth(), entity.getHeight(),
+            0, entity.getHeight()
+        };
+        hitbox = new Polygon(vertices);
+        hitbox.setPosition(x, y);
+        this.w = entity.getWidth();
+        this.h = entity.getHeight();
+        mtv = new Intersector.MinimumTranslationVector();
+        rand = new Random(MathUtils.random(1, Long.MAX_VALUE));
+    }
+
+    public float getWidth() { return hitbox.getBoundingRectangle().getWidth(); }
+    public float getHeight() { return hitbox.getBoundingRectangle().getHeight(); }
+    public float getX() { return x; }
+    public float getY() { return y; }
+
+    public void move(float delta, float playerX){
+        if(rand.nextInt(51)==1) d=!d;
+
+        if(playerX-x<100 && playerX-x>0){
+            d=false;
+        }
+        else if(x-playerX<100 && x-playerX>0){
+            d=true;
+        }
+        if(playerX-x<50 && playerX-x>0){
+            s=125;
+        }
+        else if(x-playerX<50 && x-playerX>0){
+            s=125;
+        }
+        else s=50;
+        if(d) x+=delta*s;
+        else x-=delta*s;
+        hitbox.setPosition(x, y);
+        entity.setPosition(x, y);
+    }
+
+    private void gravity(float delta, float floor){
+        if (y<=floor){
+            y = floor;
+        }
+        else{
+            v += g*delta;
+            y += v*delta;
+            if (y<floor) y = floor;
+        }
+    }
+
+    public void update(float delta, float floor, float playerX){
+        move(delta, playerX);
+        gravity(delta, floor);
+    }
+
+    public void render(Batch batch) {
+        entity.draw(batch);
+    }
+
+}
