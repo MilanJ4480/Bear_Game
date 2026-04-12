@@ -54,6 +54,7 @@ public class Entity {
     }
 
     public Polygon getPolygon() { return hitbox; }
+    public void setPolygon(Polygon hitbox) { this.hitbox = hitbox; }
     public float getWidth() { return hitbox.getBoundingRectangle().getWidth(); }
     public float getHeight() { return hitbox.getBoundingRectangle().getHeight(); }
     public float getX() { return x; }

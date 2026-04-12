@@ -25,6 +25,8 @@ public class Main extends ApplicationAdapter {
     private Background bgGround;
     private Background rock;
     private ChunkManager chunkManager;
+    private Enemy enemy;
+    private Cave cave;
 
 
     //Textures
@@ -32,6 +34,8 @@ public class Main extends ApplicationAdapter {
     private Texture ground;
     private Texture log;
     private Texture Rock;
+    private Texture fox;
+    private Texture caveTexture;
 
 
     //Hitbox
@@ -62,9 +66,14 @@ public class Main extends ApplicationAdapter {
         ground = new Texture("ground.png");
         bgGround = new Background(ground, 0, 0, 1, 1, true);
         rock = new Background(Rock, 150, bgGround.getHeight(), 2, 2, false);
+        caveTexture = new Texture("cave.png");
+
+        fox = new Texture("rlfox.png");
 
         player=new Player(50, ground.getHeight());
         entity=new Entity(log, 150, 0, 4, 4);
+        enemy = new Enemy(fox, 150, 100, 0.1f, 0.1f);
+        cave = new Cave(caveTexture, -640, chunkManager.getFloor(0, 1, 0)-48);
 
     }
 
@@ -91,8 +100,9 @@ public class Main extends ApplicationAdapter {
         player.update(chunkManager.getFloor(player.getX(), player.getWidth(), player.getY()), delta);
         entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player, player.getFace());
         chunkManager.update(player.getX());
+        enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getCenter());
 
-        camera.position.set(player.getX(), player.getY(), 0);
+        camera.position.set(player.getCenter(), player.getY()+64, 0);
         camera.update();
 
 
@@ -101,12 +111,13 @@ public class Main extends ApplicationAdapter {
 //        batch.draw(ground, 0, 0);
 //        bgGround.render(batch);
         chunkManager.render(batch, player.getX());
-        chunkManager.renderGround(batch, player.getX());
-        //chunkManager.renderRocks(batch, player.getX());
+        chunkManager.renderRocks(batch, player.getX());
 //        rock.render(batch);
         player.render(batch);
         entity.render(batch);
-        //chunkManager.renderPlants(batch, player.getX());
+        chunkManager.renderPlants(batch, player.getX());
+        enemy.render(batch);
+        cave.render(batch);
 
         batch.end();
 
@@ -123,5 +134,7 @@ public class Main extends ApplicationAdapter {
         player.dispose();
         log.dispose();
         chunkManager.dispose();
+        fox.dispose();
+        caveTexture.dispose();
     }
 }
