@@ -111,11 +111,13 @@ public class Main extends ApplicationAdapter {
 //        batch.draw(ground, 0, 0);
 //        bgGround.render(batch);
         chunkManager.render(batch, player.getX());
+//        chunkManager.renderTrees(batch, player.getX());
         chunkManager.renderRocks(batch, player.getX());
+        chunkManager.renderPlants(batch, player.getX());
 //        rock.render(batch);
         player.render(batch);
+        chunkManager.renderPlantsFront(batch, player.getX());
         entity.render(batch);
-        chunkManager.renderPlants(batch, player.getX());
         enemy.render(batch);
         cave.render(batch);
 

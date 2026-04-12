@@ -15,7 +15,7 @@ public class Weights {
     short[] plants;
 
     short biome;
-    short rock;
+    int rock;
 
     public Weights(long seed){
         rand = new Random(seed);
@@ -35,13 +35,13 @@ public class Weights {
             new short[]{4},
             new short[]{0}
         };
-        biomes = new short[]{0, 1, 2, 3};
+        biomes = new short[]{0, 1, 2, 3, 4};
     }
 
-    public short[] getLayers(short prev, int n) {
+    public short[] getLayers(short prev) {
         layersReturn = new short[11];
 
-        if (n%4==0 && rand.nextInt(2) == 1) biome = biomes[rand.nextInt(biomes.length)];
+        if (rand.nextInt(6) == 1) biome = biomes[rand.nextInt(biomes.length)];
         else biome = prev;
 
         for (int i = 0; i < layersReturn.length-1; i++) layersReturn[i] = layers[i][rand.nextInt(layers[i].length)];
@@ -50,20 +50,52 @@ public class Weights {
         return layersReturn;
     }
 
-    public int getGround(short biome){
-        if (biome==1) return rand.nextInt(10);
-        else return -1;
+    public int getTree(int biome){
+        if (biome==4 && rand.nextInt(3)==0){
+            return rand.nextInt(2);
+        }
+        return -1;
     }
 
-    public short getRock() {
-        rock = (short) rand.nextInt(201);
+    public int getShrub(int biome){
+        if (biome==4 && rand.nextInt(2)==0){
+            return rand.nextInt(3);
+        }
+        return -1;
+    }
+
+    public int getFlower(int biome){
+        if (biome==4 && rand.nextInt(2)==0){
+            return rand.nextInt(6);
+        }
+        return -1;
+    }
+
+    public int getGrass(int biome){
+        if (biome==4 && rand.nextInt(2)==0){
+            return rand.nextInt(9);
+        }
+        return -1;
+    }
+
+    public int getTile(int biome){
+        if (biome==4){
+            return rand.nextInt(3);
+        }
+        return -1;
+    }
+
+    public int getRock(int biome) {
+        if(biome==4 && rand.nextInt(3)==1) return rand.nextInt(5);
+        else return -1;
+/*        rock = rand.nextInt(201);
         if (rock>69) rock = -1;
         else {
             if (rock > 64) rock = (short) rand.nextInt(70);
             if (rock > 64) rock = (short) rand.nextInt(70);
             if (rock > 64) rock = (short) rand.nextInt(70);
         }
-        return rock;
+        return rock;*/
     }
 
     public int getPlants(short biome) {
@@ -83,7 +115,7 @@ public class Weights {
         else return rand.nextInt(5);
     }
 
-    public float randX(float x, float w) {return x+ rand.nextFloat()*w;}
+    public float randX(float x, float w) {return x + rand.nextFloat()*w;}
     public boolean randBool() {return rand.nextBoolean();}
     public short randScale() {return (short) rand.nextInt(5); }
 }
