@@ -78,7 +78,7 @@ public class ChunkManager {
         for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=1280) {
             if (chunk.ground!=-1){
                 if (chunk.biome==1){
-                    batch.draw(moss[chunk.ground], chunk.x, chunk.getFloor(), moss[chunk.ground].getRegionWidth(), moss[chunk.ground].getRegionHeight());
+                    batch.draw(moss[chunk.ground], chunk.x, chunk.getFloor()-16, moss[chunk.ground].getRegionWidth(), moss[chunk.ground].getRegionHeight());
                 }
             }
         }
