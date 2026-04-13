@@ -159,8 +159,8 @@ public class ChunkManager {
                 for(int j = chunk.world[3].length/2; j < chunk.world[3].length; j++) if(chunk.world[3][j]!=-1) batch.draw(alpine[3][chunk.world[3][j]], chunk.worldCords[3][j], chunk.getFloor());
                 for(int j = chunk.world[1].length/2; j < chunk.world[1].length; j++) if(chunk.world[1][j]!=-1) batch.draw(alpine[1][chunk.world[1][j]], chunk.worldCords[1][j], chunk.getFloor());
                 for(int j = chunk.world[2].length/2; j < chunk.world[2].length; j++) if(chunk.world[2][j]!=-1) batch.draw(alpine[2][chunk.world[2][j]], chunk.worldCords[2][j], chunk.getFloor());
-                if(chunk.world[5][0]!=-1) batch.draw(alpine[5][chunk.world[5][0]], chunk.x, chunk.getFloor()-((float) alpine[5][chunk.world[5][0]].getRegionHeight() /2));
-                System.out.println(alpine[5][chunk.world[5][0]].getRegionWidth());
+//                if(chunk.world[5][0]!=-1) batch.draw(alpine[5][chunk.world[5][0]], chunk.x, chunk.getFloor()-((float) alpine[5][chunk.world[5][0]].getRegionHeight() /2));
+//                System.out.println(alpine[5][chunk.world[5][0]].getRegionWidth());
             }
             else {
                 for (int k = chunk.plants.length/2; k < chunk.plants.length; k++) {
