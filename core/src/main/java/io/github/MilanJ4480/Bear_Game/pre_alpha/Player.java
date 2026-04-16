@@ -33,7 +33,7 @@ public class Player{
 
         //Walking Animation
         bearWalk1Atlas = new TextureAtlas("bearWalk1Atlas/bearWalk.atlas");
-        bearWalk1 = new Animation<>(0.18f, bearWalk1Atlas.findRegions("bear_walk_1"));
+        bearWalk1 = new Animation<>(1f/12f, bearWalk1Atlas.findRegions("bear_walk_1"));
         bearWalk1.setPlayMode(Animation.PlayMode.LOOP);
         bear = new Sprite( bearWalk1.getKeyFrame(0));
         bear.setScale(1, 1);
@@ -101,7 +101,7 @@ public class Player{
     public void update(float f, float delta) {
 //        if (Intersector.overlapConvexPolygons(polyBear, ground)) floor=ground.getBoundingRectangle().getHeight()-5;
         floor = f;
-        if (Gdx.input.isKeyPressed(Input.Keys.E)) bearS=875;
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) bearS=175;
         else bearS=75;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;
@@ -115,6 +115,8 @@ public class Player{
             bearX += (-bearS) * delta;
             bearFace = true;
             }
+
+        System.out.println(stateTime);
         if  (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !jump) {
             jump=true;
             bearV+=jumpStrength;

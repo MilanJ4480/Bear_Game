@@ -35,7 +35,7 @@ public class Weights {
             new short[]{4},
             new short[]{0}
         };
-        biomes = new short[]{0, 1, 2, 3, 4};
+        biomes = new short[]{4};
     }
 
     public short[] getLayers(short prev) {
