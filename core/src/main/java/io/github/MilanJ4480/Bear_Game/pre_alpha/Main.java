@@ -72,7 +72,7 @@ public class Main extends ApplicationAdapter {
 
         player=new Player(50, ground.getHeight());
         entity=new Entity(log, 150, 0, 4, 4);
-        enemy = new Enemy(fox, 150, 100, 0.1f, 0.1f);
+        enemy = new Enemy(fox, 150, 100, 0.1f, 0.1f, 4);
         cave = new Cave(caveTexture, -640, chunkManager.getFloor(0, 1, 0)-48);
 
     }
@@ -84,7 +84,7 @@ public class Main extends ApplicationAdapter {
     public void hitbox(float x, float y, float w, float h){
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED); // Choose a color for visibility
+        shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(x, y, w, h);
         shapeRenderer.end();
     }
@@ -100,7 +100,7 @@ public class Main extends ApplicationAdapter {
         player.update(chunkManager.getFloor(player.getX(), player.getWidth(), player.getY()), delta);
         entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player, player.getFace());
         chunkManager.update(player.getX());
-        enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getCenter());
+        enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox());
 
         camera.position.set(player.getCenter(), player.getY()+64, 0);
         camera.update();
@@ -123,8 +123,9 @@ public class Main extends ApplicationAdapter {
 
         batch.end();
 
-//        hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
-//        hitbox(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
+        //hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        //if (player.getAttack()) hitbox(player.getSwipeBox().getX(), player.getSwipeBox().getY(), player.getSwipeBox().getBoundingRectangle().getWidth(), player.getSwipeBox().getBoundingRectangle().getHeight());
+        //hitbox(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
 //        hitbox(bgGround.getX(), bgGround.getY(),  bgGround.getWidth(), bgGround.getHeight());
     }
 

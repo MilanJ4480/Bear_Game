@@ -5,15 +5,21 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Polygon;
 
+import java.util.Arrays;
+
 import static java.lang.Math.sqrt;
 
 public class Player{
 
     private TextureAtlas bearWalk1Atlas;
+    private TextureAtlas bearSwipeAtlas;
+    private Animation<TextureRegion> bearAnimation;
     private Animation<TextureRegion> bearWalk1;
+    private Animation<TextureRegion> bearSwipe;
     private Sprite bear;
 //    private Rectangle rectBear;
     private Polygon polyBear;
+    private Polygon swipeBox;
 
     private float bearX;
     private float bearY;
@@ -28,6 +34,7 @@ public class Player{
     private boolean tl;
     private boolean doG;
     private float jumpStrength;
+    private boolean attack;
 
     public Player(float X, float Y){
 
@@ -35,7 +42,12 @@ public class Player{
         bearWalk1Atlas = new TextureAtlas("bearWalk1Atlas/bearWalk.atlas");
         bearWalk1 = new Animation<>(1f/12f, bearWalk1Atlas.findRegions("bear_walk_1"));
         bearWalk1.setPlayMode(Animation.PlayMode.LOOP);
-        bear = new Sprite( bearWalk1.getKeyFrame(0));
+        bearAnimation = bearWalk1;
+
+        bearSwipeAtlas = new TextureAtlas("bearWalk1Atlas/swipe.atlas");
+        bearSwipe = new Animation<>(1f/80f, bearSwipeAtlas.findRegions("swipe"));
+
+        bear = new Sprite( bearAnimation.getKeyFrame(0));
         bear.setScale(1, 1);
         bear.setPosition(bearX, bearY);
 //        rectBear = new Rectangle( bear.getX(), bear.getY(), bear.getWidth(), bear.getHeight());
@@ -48,6 +60,15 @@ public class Player{
         polyBear = new Polygon(vertices);
         polyBear.setPosition(X,Y);
 
+        float[] swipeVertices = new float[] {
+            0, 0,
+            polyBear.getBoundingRectangle().getWidth()/2, 0,
+            polyBear.getBoundingRectangle().getWidth()/2, polyBear.getBoundingRectangle().getHeight()/2,
+            0, polyBear.getBoundingRectangle().getHeight()/2
+        };
+        swipeBox = new Polygon(swipeVertices);
+
+
         bearS = 75;
         bearV = 0;
         bearX = X;
@@ -59,13 +80,18 @@ public class Player{
         tr=false;
         tl=false;
         doG=true;
+        attack=false;
     }
 
     public float getX(){ return polyBear.getX(); }
     public float getY(){ return polyBear.getY(); }
-    public float getV() { return bearV; }
     public Polygon getPolygon() { return polyBear; }
+    public Polygon getSwipeBox(){return swipeBox;}
+
     public boolean getFace(){ return bearFace; }
+    public boolean getAttack(){ return attack; }
+
+    public float getV() { return bearV; }
     public void setX(float X){bearX = X;}
     public void setY(float Y){bearY = Y;}
     public float getS() { return bearS; }
@@ -81,6 +107,13 @@ public class Player{
     public float getRightX(){ return bearX + polyBear.getBoundingRectangle().getWidth();}
     public float getLeftX(){ return bearX; }
     public float getCenter() { return bearX + polyBear.getBoundingRectangle().getWidth() / 2;}
+
+    public void swapAnimation(Animation<TextureRegion> animation, boolean loop){
+        if (loop) animation.setPlayMode(Animation.PlayMode.LOOP);
+        else animation.setPlayMode(Animation.PlayMode.NORMAL);
+        bearAnimation = animation;
+        stateTime = 0f;
+    }
 
     private void gravity(float delta){
         if (bearY<floor){
@@ -103,7 +136,18 @@ public class Player{
         floor = f;
         if (Gdx.input.isKeyPressed(Input.Keys.E)) bearS=175;
         else bearS=75;
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && bearAnimation==bearWalk1){
+            swapAnimation(bearSwipe, false);
+            attack = true;
+        }
+        else if (bearAnimation.isAnimationFinished(stateTime) && bearAnimation!=bearWalk1){
+            swapAnimation(bearWalk1,true);
+            attack = false;
+        }
+        if (bearAnimation == bearSwipe){
+            stateTime += delta;
+        }
+        else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;
 //            if (jump && !tr) bearX+=250*delta;
             bearX += (bearS) * delta;
@@ -115,8 +159,17 @@ public class Player{
             bearX += (-bearS) * delta;
             bearFace = true;
             }
-
-        System.out.println(stateTime);
+        else{
+            if(!bearAnimation.getKeyFrame(stateTime).equals(bearAnimation.getKeyFrames()[16])){
+                if (bearAnimation.getKeyFrameIndex(stateTime) > 8 && bearAnimation.getKeyFrameIndex(stateTime)<16) stateTime += delta;
+                else {
+                    stateTime -= delta;
+                    if (stateTime < 0){
+                        stateTime = bearAnimation.getAnimationDuration();
+                    }
+                }
+            }
+        }
         if  (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !jump) {
             jump=true;
             bearV+=jumpStrength;
@@ -129,16 +182,19 @@ public class Player{
 
         bear.setPosition(bearX, bearY);
         polyBear.setPosition(bearX, bearY);
+        if(bearFace) swipeBox.setPosition(bearX, bearY);
+        else swipeBox.setPosition(bearX+(bear.getWidth()/2), bearY);
     }
 
     public void render(SpriteBatch batch){
-        TextureRegion region = bearWalk1.getKeyFrame(stateTime, true);
+        TextureRegion region = bearAnimation.getKeyFrame(stateTime);
         doFlip(region);
         bear.setRegion(region);
         bear.draw(batch);
     }
 
     public void dispose(){
+        bearSwipeAtlas.dispose();
         bearWalk1Atlas.dispose();
     }
 

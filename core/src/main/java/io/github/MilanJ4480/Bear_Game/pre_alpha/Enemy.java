@@ -13,6 +13,9 @@ public class Enemy{
     private Intersector.MinimumTranslationVector mtv;
     private Random rand;
 
+    private int health;
+    private boolean hit;
+
     private float x;
     private float y;
     private float w;
@@ -25,7 +28,7 @@ public class Enemy{
     private boolean d;
     private float s;
 
-    public Enemy(Texture texture, float x, float y, float w, float h) {
+    public Enemy(Texture texture, float x, float y, float w, float h, int health) {
         this.entity = new Sprite(texture);
         this.x = x;
         this.y = y;
@@ -34,6 +37,7 @@ public class Enemy{
         this.hv=0;
         this.ha=0;
         s=100;
+        this.health = health;
 
         floor=0;
 
@@ -57,6 +61,11 @@ public class Enemy{
     public float getHeight() { return hitbox.getBoundingRectangle().getHeight(); }
     public float getX() { return x; }
     public float getY() { return y; }
+
+    public void playerContact(Polygon swipe){
+        if(!hit && Intersector.overlapConvexPolygons(hitbox, swipe)) health -= 1;
+        hit = true;
+    }
 
     public void move(float delta, float playerX){
         if(rand.nextInt(51)==1) d=!d;
@@ -91,13 +100,19 @@ public class Enemy{
         }
     }
 
-    public void update(float delta, float floor, float playerX){
-        move(delta, playerX);
-        gravity(delta, floor);
+    public void update(float delta, float floor, boolean attack, float playerX, Polygon swipe){
+        if(health>0){
+            move(delta, playerX);
+            gravity(delta, floor);
+            if(attack) {
+                playerContact(swipe);
+            }
+            else hit = false;
+        }
     }
 
     public void render(Batch batch) {
-        entity.draw(batch);
+        if (health>0) entity.draw(batch);
     }
 
 }
