@@ -35,13 +35,14 @@ public class Weights {
             new short[]{4},
             new short[]{0}
         };
-        biomes = new short[]{4};
+        biomes = new short[]{0, 1, 3, 4};
     }
 
     public short[] getLayers(short prev) {
         layersReturn = new short[11];
 
-        if (rand.nextInt(6) == 1) biome = biomes[rand.nextInt(biomes.length)];
+        if (rand.nextInt(6) == 1 && biome!=4) biome = biomes[rand.nextInt(biomes.length)];
+        else if (rand.nextInt(101) == 1) biome = biomes[rand.nextInt(biomes.length)];
         else biome = prev;
 
         for (int i = 0; i < layersReturn.length-1; i++) layersReturn[i] = layers[i][rand.nextInt(layers[i].length)];

@@ -149,6 +149,7 @@ public class Player{
         }
         else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;
+            //if (bearS>100) stateTime += delta;
 //            if (jump && !tr) bearX+=250*delta;
             bearX += (bearS) * delta;
             bearFace = false;
@@ -156,6 +157,7 @@ public class Player{
         else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             stateTime += delta;
 //            if (jump && !tl) bearX-=250*delta;
+            //if (bearS>100) stateTime += delta*0.5;
             bearX += (-bearS) * delta;
             bearFace = true;
             }

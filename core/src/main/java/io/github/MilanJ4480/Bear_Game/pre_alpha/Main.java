@@ -119,7 +119,7 @@ public class Main extends ApplicationAdapter {
         chunkManager.renderPlantsFront(batch, player.getX());
         entity.render(batch);
         enemy.render(batch);
-        cave.render(batch);
+        //cave.render(batch);
 
         batch.end();
 
