@@ -11,29 +11,32 @@ import static java.lang.Math.sqrt;
 
 public class Player{
 
+// Texture, Sprites, Animations
     private TextureAtlas bearWalk1Atlas;
     private TextureAtlas bearSwipeAtlas;
     private Animation<TextureRegion> bearAnimation;
     private Animation<TextureRegion> bearWalk1;
     private Animation<TextureRegion> bearSwipe;
     private Sprite bear;
+
 //    private Rectangle rectBear;
     private Polygon polyBear;
     private Polygon swipeBox;
 
+//    floats
+    private float stateTime;
     private float bearX;
     private float bearY;
     private float bearV;
-    private boolean bearFace;
-    private boolean jump;
     private float g;
-    private float stateTime;
     private float floor;
     private float bearS;
-    private boolean tr;
-    private boolean tl;
-    private boolean doG;
     private float jumpStrength;
+
+//    booleans
+    private boolean bearFace;
+    private boolean jump;
+    private boolean doG;
     private boolean attack;
 
     public Player(float X, float Y){
@@ -77,8 +80,6 @@ public class Player{
         jumpStrength= (float) sqrt(2 * (g*-1) * 75);
         jump = false;
         bearFace=false;
-        tr=false;
-        tl=false;
         doG=true;
         attack=false;
     }
@@ -100,8 +101,6 @@ public class Player{
 
     public void setV(float V){bearV = V;}
     public void setJump(boolean j){jump = j;}
-    public void setTR(boolean t) {tr = t;}
-    public void setTL(boolean t) {tl = t;}
     public void doGravity(boolean G) { doG = G; }
 
     public float getRightX(){ return bearX + polyBear.getBoundingRectangle().getWidth();}
@@ -132,7 +131,6 @@ public class Player{
     }
 
     public void update(float f, float delta) {
-//        if (Intersector.overlapConvexPolygons(polyBear, ground)) floor=ground.getBoundingRectangle().getHeight()-5;
         floor = f;
         if (Gdx.input.isKeyPressed(Input.Keys.E)) bearS=175;
         else bearS=75;
@@ -149,15 +147,11 @@ public class Player{
         }
         else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             stateTime += delta;
-            //if (bearS>100) stateTime += delta;
-//            if (jump && !tr) bearX+=250*delta;
             bearX += (bearS) * delta;
             bearFace = false;
         }
         else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             stateTime += delta;
-//            if (jump && !tl) bearX-=250*delta;
-            //if (bearS>100) stateTime += delta*0.5;
             bearX += (-bearS) * delta;
             bearFace = true;
             }

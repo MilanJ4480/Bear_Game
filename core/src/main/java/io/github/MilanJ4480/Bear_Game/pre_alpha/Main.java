@@ -22,18 +22,13 @@ public class Main extends ApplicationAdapter {
     //Classes
     private Player player;
     private Entity entity;
-    private Background bgGround;
-    private Background rock;
     private ChunkManager chunkManager;
     private Enemy enemy;
     private Cave cave;
 
 
     //Textures
-    private Texture background;
-    private Texture ground;
     private Texture log;
-    private Texture Rock;
     private Texture fox;
     private Texture caveTexture;
 
@@ -59,18 +54,12 @@ public class Main extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
         chunkManager = new ChunkManager();
 
-        background = new Texture("white.png");
         log = new Texture("log.png");
-        Rock = new Texture("rock.png");
-
-        ground = new Texture("ground.png");
-        bgGround = new Background(ground, 0, 0, 1, 1, true);
-        rock = new Background(Rock, 150, bgGround.getHeight(), 2, 2, false);
         caveTexture = new Texture("cave.png");
 
         fox = new Texture("rlfox.png");
 
-        player=new Player(50, ground.getHeight());
+        player=new Player(50, 0);
         entity=new Entity(log, 150, 0, 4, 4);
         enemy = new Enemy(fox, 150, 100, 0.1f, 0.1f, 4);
         cave = new Cave(caveTexture, -640, chunkManager.getFloor(0, 1, 0)-48);
@@ -101,6 +90,7 @@ public class Main extends ApplicationAdapter {
         entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player, player.getFace());
         chunkManager.update(player.getX());
         enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox());
+        chunkManager.updateEntityManager(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player.getCenter(), player.getSwipeBox());
 
         camera.position.set(player.getCenter(), player.getY()+64, 0);
         camera.update();
@@ -108,17 +98,14 @@ public class Main extends ApplicationAdapter {
 
         batch.begin();
 
-//        batch.draw(ground, 0, 0);
-//        bgGround.render(batch);
         chunkManager.render(batch, player.getX());
-//        chunkManager.renderTrees(batch, player.getX());
         chunkManager.renderRocks(batch, player.getX());
         chunkManager.renderPlants(batch, player.getX());
-//        rock.render(batch);
         player.render(batch);
         chunkManager.renderPlantsFront(batch, player.getX());
         entity.render(batch);
         enemy.render(batch);
+        chunkManager.renderEntities(batch);
         //cave.render(batch);
 
         batch.end();
@@ -126,14 +113,11 @@ public class Main extends ApplicationAdapter {
         //hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         //if (player.getAttack()) hitbox(player.getSwipeBox().getX(), player.getSwipeBox().getY(), player.getSwipeBox().getBoundingRectangle().getWidth(), player.getSwipeBox().getBoundingRectangle().getHeight());
         //hitbox(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
-//        hitbox(bgGround.getX(), bgGround.getY(),  bgGround.getWidth(), bgGround.getHeight());
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        background.dispose();
-        ground.dispose();
         player.dispose();
         log.dispose();
         chunkManager.dispose();

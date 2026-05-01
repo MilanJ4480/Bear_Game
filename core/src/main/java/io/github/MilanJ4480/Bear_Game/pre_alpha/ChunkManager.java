@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.utils.Array;
 
 public class ChunkManager {
@@ -19,6 +20,8 @@ public class ChunkManager {
 
     Array<Chunk> chunks;
     short biome;
+
+    EntityManager entityManager;
 
     public ChunkManager(){
         atlas = new TextureAtlas("atlas/atlas.atlas");
@@ -79,6 +82,9 @@ public class ChunkManager {
         weight = new Weights(seed);
         biome = 0;
         chunks.add(new Chunk(chunks.size, 11, biome, weight));
+
+        entityManager = new EntityManager();
+        entityManager.spawn(1000, 0, 0);
     }
 
     public float getFloor(float x, float w, float y){
@@ -97,20 +103,14 @@ public class ChunkManager {
         }
     }
 
+    public void updateEntityManager(float delta, float floor, boolean attack, float playerX, Polygon swipe){
+        entityManager.update(delta, floor, attack, playerX, swipe);
+    }
+
     public void render(Batch batch, float playerX){
         for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=640) {
             for(int i = 0; i < chunk.layers.length; i++) {
                 batch.draw(layers[chunk.layers[i]], chunk.x, chunk.y + (16 * i), chunk.w, 16);
-            }
-        }
-    }
-
-    public void renderTrees(Batch batch, float playerX){
-        for (Chunk chunk : chunks) if (Math.abs(playerX-chunk.getX())<=640) {
-            if (chunk.biome==4) {
-                for(int i = 0; i < chunk.world[0].length; i++) {
-                    if(chunk.world[0][i]!=-1) batch.draw(alpine[0][chunk.world[0][i]], chunk.worldCords[0][i], chunk.getFloor());
-                }
             }
         }
     }
@@ -171,6 +171,10 @@ public class ChunkManager {
                 }
             }
         }
+    }
+
+    public void renderEntities(Batch batch){
+        entityManager.render(batch);
     }
 
     public void dispose(){

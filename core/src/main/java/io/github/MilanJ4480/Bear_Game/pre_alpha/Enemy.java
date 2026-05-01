@@ -10,23 +10,20 @@ import java.util.Random;
 public class Enemy{
     private Sprite entity;
     private Polygon hitbox;
-    private Intersector.MinimumTranslationVector mtv;
-    private Random rand;
+    public Random rand;
 
     private int health;
     private boolean hit;
 
-    private float x;
-    private float y;
-    private float w;
-    private float h;
+    public float x;
+    public float y;
+
     private float g;
     private float v;
-    private float hv;
-    private float ha;
-    private float floor;
-    private boolean d;
     private float s;
+
+    private boolean d;
+
 
     public Enemy(Texture texture, float x, float y, float w, float h, int health) {
         this.entity = new Sprite(texture);
@@ -34,27 +31,25 @@ public class Enemy{
         this.y = y;
         this.g = -1000;
         this.v=0;
-        this.hv=0;
-        this.ha=0;
         s=100;
         this.health = health;
 
-        floor=0;
 
-        entity.setPosition(x, y);
-        entity.setSize(entity.getWidth()*w, entity.getHeight()*h);
+
+        rand = new Random(MathUtils.random(1, Long.MAX_VALUE));
+
         float[] vertices = new float[] {
             0, 0,
             entity.getWidth(), 0,
             entity.getWidth(), entity.getHeight(),
             0, entity.getHeight()
         };
+
         hitbox = new Polygon(vertices);
         hitbox.setPosition(x, y);
-        this.w = entity.getWidth();
-        this.h = entity.getHeight();
-        mtv = new Intersector.MinimumTranslationVector();
-        rand = new Random(MathUtils.random(1, Long.MAX_VALUE));
+
+        entity.setPosition(x, y);
+        entity.setSize(entity.getWidth()*w, entity.getHeight()*h);
     }
 
     public float getWidth() { return hitbox.getBoundingRectangle().getWidth(); }
@@ -68,6 +63,7 @@ public class Enemy{
     }
 
     public void move(float delta, float playerX){
+
         if(rand.nextInt(51)==1) d=!d;
 
         if(playerX-x<100 && playerX-x>0){
@@ -85,8 +81,6 @@ public class Enemy{
         else s=50;
         if(d) x+=delta*s;
         else x-=delta*s;
-        hitbox.setPosition(x, y);
-        entity.setPosition(x, y);
     }
 
     private void gravity(float delta, float floor){
@@ -104,6 +98,8 @@ public class Enemy{
         if(health>0){
             move(delta, playerX);
             gravity(delta, floor);
+            hitbox.setPosition(x, y);
+            entity.setPosition(x, y);
             if(attack) {
                 playerContact(swipe);
             }

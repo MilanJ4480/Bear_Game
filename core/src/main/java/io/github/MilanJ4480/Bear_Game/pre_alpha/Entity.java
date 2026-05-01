@@ -18,7 +18,6 @@ public class Entity {
 
     private float x;
     private float y;
-    private float w;
     private float h;
     private float g;
     private float v;
@@ -47,7 +46,6 @@ public class Entity {
             };
         hitbox = new Polygon(vertices);
         hitbox.setPosition(x, y);
-        this.w = entity.getWidth();
         this.h = entity.getHeight();
         mtv = new Intersector.MinimumTranslationVector();
 
@@ -93,14 +91,12 @@ public class Entity {
             else if (mtv.normal.x > 0.1){//(player.getCenter()>hitbox.getX()+(w/2)) {
                 x -= mtv.depth; //((player.getS()*delta)+(1*delta)); //+ ((y-floor) * delta * player.getS());
 //                if (player.getLeftX()+5<hitbox.getX()+w) y += 236 * delta;
-                player.setTL(true);
                 hv = -player.getS();
                 //player.doGravity(true);
             }
             else if (mtv.normal.x < 0.1){//if (player.getCenter()<hitbox.getX()+(w/2)) {
                 x += mtv.depth;//((player.getS()*delta)+(1*delta)); //+ ((y-floor) * delta * player.getS());
 //                if (player.getRightX()-5>hitbox.getX()) y += 236 * delta;
-                player.setTR(true);
                 hv = player.getS();
                 //player.doGravity(true);
             }
@@ -112,8 +108,6 @@ public class Entity {
         gravity(delta, floor);
 
         if (y==floor) v=0;
-        player.setTL(false);
-        player.setTR(false);
 
         entity.setPosition(x, y);
         hitbox.setPosition(x, y);
