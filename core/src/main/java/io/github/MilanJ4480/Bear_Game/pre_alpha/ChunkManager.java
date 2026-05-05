@@ -1,5 +1,7 @@
 package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,6 +24,10 @@ public class ChunkManager {
     short biome;
 
     EntityManager entityManager;
+    Array<Enemy> enemies;
+
+    Texture deerTexture;
+    Texture leader;
 
     public ChunkManager(){
         atlas = new TextureAtlas("atlas/atlas.atlas");
@@ -83,8 +89,19 @@ public class ChunkManager {
         biome = 0;
         chunks.add(new Chunk(chunks.size, 11, biome, weight));
 
-        entityManager = new EntityManager();
-        entityManager.spawn(1000, 0, 0);
+        //entityManager = new EntityManager();
+        //entityManager.spawn(1000, 0, 0);
+
+        deerTexture = new Texture("deer.png");
+        leader = new Texture("leader.png");
+
+        enemies = new Array<>();
+
+        float[] deerX = new  float[6];
+        enemies.add(new Deer(leader, 20, 20, 0.25f, 0.25f, 5, deerX, 0));
+        for(int i=1; i<5; i++) {
+            enemies.add(new Deer(deerTexture, 20, 20, 0.1f, 0.1f, 5, deerX, i));
+        }
     }
 
     public float getFloor(float x, float w, float y){
@@ -100,11 +117,8 @@ public class ChunkManager {
         if (Math.abs(playerX)+640>chunks.get(chunks.size-1).x){
             chunks.add(new Chunk(chunks.size, 11, biome, weight));
             biome = chunks.get(chunks.size-1).biome;
+            spawn();
         }
-    }
-
-    public void updateEntityManager(float delta, float floor, boolean attack, float playerX, Polygon swipe){
-        entityManager.update(delta, floor, attack, playerX, swipe);
     }
 
     public void render(Batch batch, float playerX){
@@ -173,12 +187,39 @@ public class ChunkManager {
         }
     }
 
-    public void renderEntities(Batch batch){
-        entityManager.render(batch);
+    public void spawn(){
+        if(weight.spawn(biome)==1){
+            float[] deerX = new  float[6];
+            float x = chunks.get(chunks.size-1).getX();
+            float y = chunks.get(chunks.size-1).getY();
+            enemies.add(new Deer(leader, x, y, 0.25f, 0.25f, 5, deerX, 0));
+            for(int i=1; i<5; i++) {
+                enemies.add(new Deer(deerTexture, x+(i*5), y+(i*5), 0.1f, 0.1f, 5, deerX, i));
+            }
+            System.out.println("Spawned Deer");
+        }
+    }
+
+    public void updateEnemies(float delta, float floor, boolean attack, float playerX, Polygon swipe, Camera camera){
+        for(int i=0; i<enemies.size; i++){
+            enemies.get(i).update(delta, floor, attack, playerX, swipe, camera);
+            if(enemies.get(i).getHealth()==-1){
+                enemies.removeIndex(i);
+                i--;
+            }
+        }
+    }
+
+    public void renderEnemies(Batch batch){
+        for(Enemy enemy : enemies){
+            enemy.render(batch);
+        }
     }
 
     public void dispose(){
         atlas.dispose();
         alpineAtlas.dispose();
+        deerTexture.dispose();
+        leader.dispose();
     }
 }

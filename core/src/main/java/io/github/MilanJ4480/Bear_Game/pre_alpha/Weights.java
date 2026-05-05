@@ -35,7 +35,7 @@ public class Weights {
             new short[]{4},
             new short[]{0}
         };
-        biomes = new short[]{0, 1, 3, 4};
+        biomes = new short[]{0, 1, 3, 4, 4, 4, 4, 4, 4, 4, 4};
     }
 
     public short[] getLayers(short prev) {
@@ -114,6 +114,13 @@ public class Weights {
         if (biome == 1) return rand.nextInt(16-2)+2;
         else if  (biome == 3) return rand.nextInt(21-10)+10;
         else return rand.nextInt(5);
+    }
+
+    public int spawn(int biome){
+        int x = rand.nextInt(50);
+//        System.out.println(biome + " " + x);
+        if(biome==4 && x==0) return rand.nextInt(2);
+        return -1;
     }
 
     public float randX(float x, float w) {return x + rand.nextFloat()*w;}

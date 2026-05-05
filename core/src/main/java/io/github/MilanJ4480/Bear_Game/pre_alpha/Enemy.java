@@ -1,7 +1,10 @@
 package io.github.MilanJ4480.Bear_Game.pre_alpha;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
@@ -13,6 +16,7 @@ public class Enemy{
     public Random rand;
 
     private int health;
+    private int t;
     private boolean hit;
 
     public float x;
@@ -23,6 +27,9 @@ public class Enemy{
     private float s;
 
     private boolean d;
+
+    private ShapeRenderer shapeRenderer;
+
 
 
     public Enemy(Texture texture, float x, float y, float w, float h, int health) {
@@ -38,6 +45,10 @@ public class Enemy{
 
         rand = new Random(MathUtils.random(1, Long.MAX_VALUE));
 
+
+        entity.setPosition(x, y);
+        entity.setSize(entity.getWidth()*w, entity.getHeight()*h);
+
         float[] vertices = new float[] {
             0, 0,
             entity.getWidth(), 0,
@@ -48,14 +59,28 @@ public class Enemy{
         hitbox = new Polygon(vertices);
         hitbox.setPosition(x, y);
 
-        entity.setPosition(x, y);
-        entity.setSize(entity.getWidth()*w, entity.getHeight()*h);
+        shapeRenderer = new ShapeRenderer();
     }
 
     public float getWidth() { return hitbox.getBoundingRectangle().getWidth(); }
     public float getHeight() { return hitbox.getBoundingRectangle().getHeight(); }
     public float getX() { return x; }
     public float getY() { return y; }
+    public float getTexture() { return t; }
+
+    public void death(){
+        health = -1;
+    }
+
+    public int getHealth() { return health; }
+
+    public void hitbox(float x, float y, float w, float h, Camera camera){
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(x, y, w, h);
+        shapeRenderer.end();
+    }
 
     public void playerContact(Polygon swipe){
         if(!hit && Intersector.overlapConvexPolygons(hitbox, swipe)) health -= 1;
@@ -94,7 +119,7 @@ public class Enemy{
         }
     }
 
-    public void update(float delta, float floor, boolean attack, float playerX, Polygon swipe){
+    public void update(float delta, float floor, boolean attack, float playerX, Polygon swipe, Camera camera){
         if(health>0){
             move(delta, playerX);
             gravity(delta, floor);
@@ -104,11 +129,17 @@ public class Enemy{
                 playerContact(swipe);
             }
             else hit = false;
+            hitbox(x, y, getWidth(), getHeight(), camera);
+
+            if(health<0) death();
         }
+
     }
 
     public void render(Batch batch) {
-        if (health>0) entity.draw(batch);
+        if (health>0) {
+            entity.draw(batch);
+        }
     }
 
 }

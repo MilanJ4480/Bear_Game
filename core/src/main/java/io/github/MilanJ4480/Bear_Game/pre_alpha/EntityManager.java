@@ -1,6 +1,7 @@
 package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Polygon;
@@ -25,9 +26,9 @@ public class EntityManager {
         }
     }
 
-    public void update(float delta, float floor, boolean attack, float playerX, Polygon swipe){
+    public void update(float delta, float floor, boolean attack, float playerX, Polygon swipe, Camera camera){
         for(int i=0; i<5; i++){
-            deer.get(i).update(delta, floor, attack, playerX, swipe);
+            deer.get(i).update(delta, floor, attack, playerX, swipe, camera);
         }
     }
     public void render(Batch batch){

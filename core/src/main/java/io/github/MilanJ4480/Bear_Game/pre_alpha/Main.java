@@ -2,6 +2,7 @@ package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -89,8 +90,8 @@ public class Main extends ApplicationAdapter {
         player.update(chunkManager.getFloor(player.getX(), player.getWidth(), player.getY()), delta);
         entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player, player.getFace());
         chunkManager.update(player.getX());
-        enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox());
-        chunkManager.updateEntityManager(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player.getCenter(), player.getSwipeBox());
+        enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox(), camera);
+        chunkManager.updateEnemies(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player.getCenter(), player.getSwipeBox(), camera);
 
         camera.position.set(player.getCenter(), player.getY()+64, 0);
         camera.update();
@@ -105,7 +106,7 @@ public class Main extends ApplicationAdapter {
         chunkManager.renderPlantsFront(batch, player.getX());
         entity.render(batch);
         enemy.render(batch);
-        chunkManager.renderEntities(batch);
+        chunkManager.renderEnemies(batch);
         //cave.render(batch);
 
         batch.end();
