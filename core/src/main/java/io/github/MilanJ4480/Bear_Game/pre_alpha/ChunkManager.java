@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 public class ChunkManager {
@@ -23,11 +24,12 @@ public class ChunkManager {
     Array<Chunk> chunks;
     short biome;
 
-    EntityManager entityManager;
     Array<Enemy> enemies;
 
     Texture deerTexture;
     Texture leader;
+
+    Item item;
 
     public ChunkManager(){
         atlas = new TextureAtlas("atlas/atlas.atlas");
@@ -40,13 +42,14 @@ public class ChunkManager {
         }
         layers[11] = new TextureRegion(alpineAtlas.findRegion("alpine_layer"));
 
-        alpine = new TextureRegion[6][];
+        alpine = new TextureRegion[7][];
         alpine[0] = new TextureRegion[2]; //alpine_fir
         alpine[1] = new TextureRegion[3]; //alpine_fir_shrub
         alpine[2] = new TextureRegion[6]; //alpine_flower
         alpine[3] = new TextureRegion[9]; //alpine_grass
         alpine[4] = new TextureRegion[5]; //alpine_rock
         alpine[5] = new TextureRegion[3]; //alpine_tile
+        alpine[6] = new TextureRegion[1];
 
         for (int i=0; i<alpine[0].length; i++){
             alpine[0][i] = new TextureRegion(alpineAtlas.findRegion("alpine_fir" + (i+1)));
@@ -70,6 +73,10 @@ public class ChunkManager {
 
         for (int i=0; i<alpine[5].length; i++){
             alpine[5][i] = new TextureRegion(alpineAtlas.findRegion("alpine_tile" + (i+1)));
+        }
+
+        for (int i=0; i<alpine[6].length; i++){
+            alpine[6][i] = new TextureRegion(alpineAtlas.findRegion("alpine_stick" + (i+1)));
         }
 
 
@@ -97,11 +104,13 @@ public class ChunkManager {
 
         enemies = new Array<>();
 
-        float[] deerX = new  float[6];
+        /*float[] deerX = new  float[6];
         enemies.add(new Deer(leader, 20, 20, 0.25f, 0.25f, 5, deerX, 0));
         for(int i=1; i<5; i++) {
             enemies.add(new Deer(deerTexture, 20, 20, 0.1f, 0.1f, 5, deerX, i));
-        }
+        }*/
+
+        item = new Item(alpine[6][0], 50, 0);
     }
 
     public float getFloor(float x, float w, float y){
@@ -200,7 +209,7 @@ public class ChunkManager {
         }
     }
 
-    public void updateEnemies(float delta, float floor, boolean attack, float playerX, Polygon swipe, Camera camera){
+    public void updateEnemies(float delta, float floor, boolean attack, float playerX, Polygon swipe, Camera camera, Vector3 mouse){
         for(int i=0; i<enemies.size; i++){
             enemies.get(i).update(delta, floor, attack, playerX, swipe, camera);
             if(enemies.get(i).getHealth()==-1){
@@ -208,12 +217,14 @@ public class ChunkManager {
                 i--;
             }
         }
+        item.update(delta, getFloor(item.getX(), item.getW(), item.getY()),playerX, swipe, mouse);
     }
 
     public void renderEnemies(Batch batch){
         for(Enemy enemy : enemies){
             enemy.render(batch);
         }
+        item.render(batch);
     }
 
     public void dispose(){

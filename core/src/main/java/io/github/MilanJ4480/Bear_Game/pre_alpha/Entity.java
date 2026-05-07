@@ -78,7 +78,7 @@ public class Entity {
         x+=hv*delta;
     }
 
-    public void update(float delta, float f, Player player, boolean face) {
+    public void update(float delta, float f, Player player) {
         floor = f;
         if (Intersector.overlapConvexPolygons(player.getPolygon(), hitbox, mtv)) {
             if (player.getY() >= hitbox.getY()+h || mtv.normal.y>0.1) { //(player.getLeftX()<hitbox.getX()+w || player.getRightX()-5>hitbox.getX()))){

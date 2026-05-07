@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -86,12 +87,14 @@ public class Main extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
 
         float delta = Math.min(Gdx.graphics.getDeltaTime(), 1f/30f);
+        Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        viewport.unproject(mouse);
 
         player.update(chunkManager.getFloor(player.getX(), player.getWidth(), player.getY()), delta);
-        entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player, player.getFace());
+        entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player);
         chunkManager.update(player.getX());
         enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox(), camera);
-        chunkManager.updateEnemies(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player.getCenter(), player.getSwipeBox(), camera);
+        chunkManager.updateEnemies(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player.getCenter(), player.getSwipeBox(), camera, mouse);
 
         camera.position.set(player.getCenter(), player.getY()+64, 0);
         camera.update();

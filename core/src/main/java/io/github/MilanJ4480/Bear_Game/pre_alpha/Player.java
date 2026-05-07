@@ -32,6 +32,7 @@ public class Player{
     private float floor;
     private float bearS;
     private float jumpStrength;
+    float m;
 
 //    booleans
     private boolean bearFace;
@@ -77,6 +78,7 @@ public class Player{
         bearX = X;
         bearY = Y;
         g=-750;
+        m=500;
         jumpStrength= (float) sqrt(2 * (g*-1) * 75);
         jump = false;
         bearFace=false;
@@ -87,11 +89,14 @@ public class Player{
     public float getX(){ return polyBear.getX(); }
     public float getY(){ return polyBear.getY(); }
     public Polygon getPolygon() { return polyBear; }
-    public Polygon getSwipeBox(){return swipeBox;}
+    public Polygon getSwipeBox(){ return swipeBox;}
+
+//    public float mouthX() { return }
 
     public boolean getFace(){ return bearFace; }
     public boolean getAttack(){ return attack; }
 
+    public float getM() { return m; }
     public float getV() { return bearV; }
     public void setX(float X){bearX = X;}
     public void setY(float Y){bearY = Y;}
@@ -132,8 +137,8 @@ public class Player{
 
     public void update(float f, float delta) {
         floor = f;
-        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Input.Keys.E)) bearS=750;
-        else if (Gdx.input.isKeyPressed(Input.Keys.E)) bearS=175;
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=750;
+        else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=175;
         else bearS=75;
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && bearAnimation==bearWalk1){
             swapAnimation(bearSwipe, false);
