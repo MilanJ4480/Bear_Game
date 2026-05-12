@@ -28,10 +28,14 @@ public class Item {
     private float floor;
 
     private  boolean held;
+    private boolean carry;
     private  boolean face;
 
     public Item(TextureRegion texture, float x, float y) {
         this.item = new Sprite(texture);
+
+        item.setOrigin(0, 0);
+        item.flip(true, false);
 
         float[] vertices = new float[] {
             0, 0,
@@ -49,6 +53,7 @@ public class Item {
         this.g = -1000;
         this.v=0;
         face=true;
+        carry=false;
     }
 
     public float getX() { return x; }
@@ -68,44 +73,73 @@ public class Item {
 
     private void rotate(float delta, Vector3 mouse){
         float a = item.getRotation() % 360;
-        float b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , (mouse.x-x));
+        float b;
+        if(face) b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , -Math.abs(mouse.x-x));
+        else b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , Math.abs(mouse.x-x));
+        //System.out.println(a);
+        //System.out.println(b);
+
+        //if (b>90 || b<-90) b -= b-90;
 
         float diff = a-b;
 
         if (diff>180) diff -= 360;
         if (diff<-180) diff += 360;
 
-        if(Math.abs(a-b) > 5) {
-            item.rotate(delta*Math.signum(diff));
-        }
+        if(Math.abs(diff) > 5) item.rotate(delta * diff * 5);
     }
 
-    public void update(float delta, float f, float playerX, Polygon swipeBox, Vector3 mouse) {
-        if((Intersector.overlapConvexPolygons(hitbox, swipeBox) && Gdx.input.isKeyJustPressed(Input.Keys.E)) || held){
+    public void update(float delta, float f, Player player, Vector3 mouse) {
+        if(carry){
+            if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                carry=false;
+                if (!item.isFlipX()) item.flip(true, false);
+            }
+            else {
+                x = player.getX();
+                y = player.getY() + player.getHeight();
+                if (player.getFace() && !item.isFlipX()) item.flip(true, false);
+                else if (!player.getFace() && item.isFlipX()) item.flip(true, false);
+            }
+        }
+        else if((Intersector.overlapConvexPolygons(hitbox, player.getSwipeBox()) && Gdx.input.isKeyJustPressed(Input.Keys.E)) || held){
             if(held && Gdx.input.isKeyJustPressed(Input.Keys.E)) held=false;
             else held=true;
 
-            if(playerX>swipeBox.getX()) {
-                x = swipeBox.getX()-swipeBox.getBoundingRectangle().getWidth();
+            if(player.getFace()) {
+                if(!face) item.setRotation(MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , -Math.abs(mouse.x-x)));
+                x = player.getX();//-swipeBox.getBoundingRectangle().getWidth();
                 face=true;
-                item.setOrigin(w, h);
-                rotate(delta*240, mouse);
+                //System.out.println((item.getRotation()+360)%360);
+                if(mouse.x>player.getX()+player.getWidth() && ((item.getRotation()+360)%360>0 && (item.getRotation()+360)%360<180)){
+                    held=false;
+                    carry=true;
+                    face=false;
+                    item.setRotation(0);
+                }
+                //item.setOrigin(0, 0);
             }
             else {
-                x = swipeBox.getX()+swipeBox.getBoundingRectangle().getWidth();
+                if(face) item.setRotation(MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , Math.abs(mouse.x-x)));
+                x = player.getX()+player.getWidth();
                 face=false;
-                item.setOrigin(0, 0);
-                rotate(delta*-240, mouse);
+                if(mouse.x<player.getX() && (item.getRotation()%360>0 && item.getRotation()%360<180)) {
+                    held=false;
+                    carry=true;
+                    item.setRotation(0);
+                }
+                //item.setOrigin(0, 0);
             }
-            y = swipeBox.getY()+swipeBox.getBoundingRectangle().getHeight();
+            y = player.getY()+player.getHeight()/2;
+            rotate(-delta, mouse);
         }
         else {
             gravity(delta, f);
-            item.setRotation(0);
+            //item.setRotation(0);
         }
 
-        if (face && item.isFlipX()) item.flip(true, false);
-        else if  (!face && !item.isFlipX()) item.flip(true, false);
+        if (face && !item.isFlipY()) item.flip(false, true);
+        else if  (!face && item.isFlipY()) item.flip(false, true);
 
         item.setPosition(x, y);
         hitbox.setPosition(x, y);
@@ -113,5 +147,6 @@ public class Item {
 
     public void render(Batch batch) {
         item.draw(batch);
+        //batch.draw(item, x, y, w*0.25f, h*0.25f);
     }
 }

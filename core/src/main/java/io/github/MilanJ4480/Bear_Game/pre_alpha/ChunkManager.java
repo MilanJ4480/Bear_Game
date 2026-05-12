@@ -209,15 +209,15 @@ public class ChunkManager {
         }
     }
 
-    public void updateEnemies(float delta, float floor, boolean attack, float playerX, Polygon swipe, Camera camera, Vector3 mouse){
+    public void updateEnemies(float delta, float floor, boolean attack, Player bear, Camera camera, Vector3 mouse){
         for(int i=0; i<enemies.size; i++){
-            enemies.get(i).update(delta, floor, attack, playerX, swipe, camera);
+            enemies.get(i).update(delta, floor, attack, bear.getCenter(), bear.getSwipeBox(), camera);
             if(enemies.get(i).getHealth()==-1){
                 enemies.removeIndex(i);
                 i--;
             }
         }
-        item.update(delta, getFloor(item.getX(), item.getW(), item.getY()),playerX, swipe, mouse);
+        item.update(delta, getFloor(item.getX(), item.getW(), item.getY()), bear, mouse);
     }
 
     public void renderEnemies(Batch batch){

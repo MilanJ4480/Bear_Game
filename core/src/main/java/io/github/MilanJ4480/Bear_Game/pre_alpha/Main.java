@@ -94,7 +94,7 @@ public class Main extends ApplicationAdapter {
         entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player);
         chunkManager.update(player.getX());
         enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox(), camera);
-        chunkManager.updateEnemies(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player.getCenter(), player.getSwipeBox(), camera, mouse);
+        chunkManager.updateEnemies(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player, camera, mouse);
 
         camera.position.set(player.getCenter(), player.getY()+64, 0);
         camera.update();
