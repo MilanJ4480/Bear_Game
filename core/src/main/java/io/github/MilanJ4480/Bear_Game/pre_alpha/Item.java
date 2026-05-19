@@ -53,7 +53,7 @@ public class Item {
 
         this.g = -1000;
         this.v=0;
-        face=true;
+        face=false;
         isCarry=false;
     }
 
@@ -174,9 +174,11 @@ public class Item {
                     isCarry = false;
                     carry = false;
                     if (!item.isFlipX()) item.flip(true, false);
-                } else {
+                }
+                else {
                     x = getCarryX(player.getFrame(), player);
                     y = player.getY() + player.getHeight() * (4 / 5f);
+                    face = player.getFace();
                     if (playerFace && !item.isFlipX()) {
                         item.flip(true, false);
                         item.setRotation(-15);

@@ -52,7 +52,7 @@ public class Deer extends Enemy {
 
         float bear = Math.abs(playerX) - Math.abs(pack[id]);
         //System.out.println("bear: " + bear);
-        /*if ((bear < -500 || bear > 500) && id==Math.abs(pack[pack.length - 1])-1) pack[pack.length - 1] = 0;
+        if ((bear < -500 || bear > 500) && id==Math.abs(pack[pack.length - 1])-1) pack[pack.length - 1] = 0;
         else if(pack[pack.length - 1]!=0) {
             fear=true;
             if(id==Math.abs(pack[pack.length - 1])-1) pack[pack.length - 1] = Math.abs(pack[pack.length - 1])*majority(playerX);
@@ -61,7 +61,7 @@ public class Deer extends Enemy {
             fear=true;
             pack[pack.length - 1] = majority(playerX)*(id+1);
         }
-        else fear=false;*/
+        else fear=false;
         //else pack[pack.length - 1] = 0;
         //if (pack[pack.length - 1] != 0) movement = (int) (200*pack[pack.length - 1]);
         //System.out.println(pack[pack.length-1]);

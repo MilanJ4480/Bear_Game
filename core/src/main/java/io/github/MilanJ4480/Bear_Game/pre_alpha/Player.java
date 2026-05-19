@@ -39,6 +39,7 @@ public class Player{
     private boolean jump;
     private boolean doG;
     private boolean attack;
+    private boolean holding;
 
     public Player(float X, float Y){
 
@@ -90,6 +91,8 @@ public class Player{
     public float getY(){ return polyBear.getY(); }
     public Polygon getPolygon() { return polyBear; }
     public Polygon getSwipeBox(){ return swipeBox;}
+    public void setHolding(boolean holding){ this.holding=holding; }
+    public boolean getHolding() { return holding; }
 
 //    public float mouthX() { return }
 
