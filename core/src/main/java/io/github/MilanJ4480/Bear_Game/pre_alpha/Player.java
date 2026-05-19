@@ -112,6 +112,8 @@ public class Player{
     public float getLeftX(){ return bearX; }
     public float getCenter() { return bearX + polyBear.getBoundingRectangle().getWidth() / 2;}
 
+    public int getFrame() { return bearWalk1.getKeyFrameIndex(stateTime);}
+
     public void swapAnimation(Animation<TextureRegion> animation, boolean loop){
         if (loop) animation.setPlayMode(Animation.PlayMode.LOOP);
         else animation.setPlayMode(Animation.PlayMode.NORMAL);
