@@ -83,7 +83,7 @@ public class Main extends ApplicationAdapter {
     float stateTime = 0f;
     @Override
     public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        ScreenUtils.clear(0.180f, 0.233f, 0.240f, 1f);
         batch.setProjectionMatrix(camera.combined);
 
         float delta = Math.min(Gdx.graphics.getDeltaTime(), 1f/30f);
@@ -94,7 +94,8 @@ public class Main extends ApplicationAdapter {
         entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player);
         chunkManager.update(player.getX());
         enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox(), camera);
-        chunkManager.updateEnemies(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player, camera, mouse);
+        chunkManager.updateEnemies(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player, camera);
+        chunkManager.updateItems(delta, player, mouse);
 
         camera.position.set(player.getCenter(), player.getY()+64, 0);
         camera.update();
@@ -109,7 +110,8 @@ public class Main extends ApplicationAdapter {
         chunkManager.renderPlantsFront(batch, player.getX());
         entity.render(batch);
         enemy.render(batch);
-        chunkManager.renderEnemies(batch);
+        chunkManager.renderEnemies(batch, player.getX());
+        chunkManager.renderItems(batch, player.getX());
         //cave.render(batch);
 
         batch.end();

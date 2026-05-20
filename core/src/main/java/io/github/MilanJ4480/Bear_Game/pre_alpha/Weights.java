@@ -120,7 +120,13 @@ public class Weights {
         int x = rand.nextInt(50);
 //        System.out.println(biome + " " + x);
         if(biome==4 && x==0) return rand.nextInt(2);
-        return -1;
+        else return -1;
+    }
+
+    public int spawnItems(short biome) {
+        int x = rand.nextInt(10);
+        if(biome==4 && x==0) return rand.nextInt(2);
+        else return -1;
     }
 
     public float randX(float x, float w) {return x + rand.nextFloat()*w;}

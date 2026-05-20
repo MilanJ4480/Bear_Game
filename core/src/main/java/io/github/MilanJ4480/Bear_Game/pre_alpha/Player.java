@@ -23,7 +23,7 @@ public class Player{
     private Polygon polyBear;
     private Polygon swipeBox;
 
-//    floats
+//    floats && ints
     private float stateTime;
     private float bearX;
     private float bearY;
@@ -32,7 +32,8 @@ public class Player{
     private float floor;
     private float bearS;
     private float jumpStrength;
-    float m;
+    private float m;
+    private int load;
 
 //    booleans
     private boolean bearFace;
@@ -73,7 +74,7 @@ public class Player{
         };
         swipeBox = new Polygon(swipeVertices);
 
-
+        load = -1;
         bearS = 75;
         bearV = 0;
         bearX = X;
@@ -91,8 +92,12 @@ public class Player{
     public float getY(){ return polyBear.getY(); }
     public Polygon getPolygon() { return polyBear; }
     public Polygon getSwipeBox(){ return swipeBox;}
+
+
     public void setHolding(boolean holding){ this.holding=holding; }
     public boolean getHolding() { return holding; }
+    public void addLoad(int load){ this.load+=load; }
+    public int getLoad(){ return load; }
 
 //    public float mouthX() { return }
 

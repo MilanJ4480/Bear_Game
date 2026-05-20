@@ -25,7 +25,7 @@ public class Item {
     private float g;
     private float v;
 
-    private float floor;
+    private int load;
 
     private  boolean held;
     private boolean carry;
@@ -102,11 +102,13 @@ public class Item {
     public void setCarry(Vector3 mouse, Player player){
             held = false;
             isCarry = true;
+            player.addLoad(1);
+            load = player.getLoad();
             item.setRotation(0);
             hitbox.setRotation(0);
             if (face) x = player.getX() + player.getWidth() * (1 / 5f);
             else x = player.getX() + player.getWidth() * (7 / 10f) - w;
-            y = player.getY() + player.getHeight() * (4 / 5f);
+            y = player.getY() + player.getHeight() * (4 / 5f) + (h * load);
 
             if (face && !item.isFlipX()) item.flip(true, false);
             else if (!face && item.isFlipX()) item.flip(true, false);
@@ -118,8 +120,8 @@ public class Item {
         if(face) xf = getCarryX(player.getFrame(), player);
         else xf = getCarryX(player.getFrame(), player) + w;
         float yf;
-        if(face) yf = player.getY() + player.getHeight()*(4/5f);
-        else yf = player.getY() + player.getHeight();
+        if(face) yf = player.getY() + player.getHeight()*(4/5f)+ (h * load);
+        else yf = player.getY() + player.getHeight()+ (h * load);
 
         float diffX = xf-x;
 
@@ -169,19 +171,21 @@ public class Item {
         boolean playerFace = player.getFace();
 
         if(carry) {
+            player.setHolding(false);
             if (isCarry) {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
                     isCarry = false;
                     carry = false;
+                    player.addLoad(-1);
                     if (!item.isFlipX()) item.flip(true, false);
                 }
                 else {
                     x = getCarryX(player.getFrame(), player);
-                    y = player.getY() + player.getHeight() * (4 / 5f);
+                    y = player.getY() + (player.getHeight() * (4 / 5f)) + (h * load);
                     face = player.getFace();
                     if (playerFace && !item.isFlipX()) {
                         item.flip(true, false);
-                        item.setRotation(-15);
+                        //item.setRotation(-15);
                     } else {
                         if (!playerFace && item.isFlipX()) item.flip(true, false);
                         item.setRotation(0);
@@ -192,9 +196,12 @@ public class Item {
                 if(carrying(player, delta)) setCarry(mouse, player);
             }
         }
-        else if((Intersector.overlapConvexPolygons(hitbox, player.getSwipeBox()) && Gdx.input.isKeyJustPressed(Input.Keys.E)) || held){
+        else if((Intersector.overlapConvexPolygons(hitbox, player.getSwipeBox()) && Gdx.input.isKeyJustPressed(Input.Keys.E) && !player.getHolding()) || held){
             if(held && Gdx.input.isKeyJustPressed(Input.Keys.E)) held=false;
-            else held=true;
+            else {
+                held=true;
+                player.setHolding(true);
+            }
 
             if(playerFace) {
                 if(!face) item.setRotation(MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , -Math.abs(mouse.x-x)));
@@ -222,6 +229,7 @@ public class Item {
             rotate(-delta, mouse);
         }
         else {
+            player.setHolding(false);
             gravity(delta, f);
             //item.setRotation(0);
         }

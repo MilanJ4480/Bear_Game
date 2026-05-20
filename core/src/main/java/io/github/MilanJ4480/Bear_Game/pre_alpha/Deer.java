@@ -42,7 +42,6 @@ public class Deer extends Enemy {
             if(pack[i] > bear) r++;
             else l++;
         }
-        System.out.println(l>r);
         if(l>r) return -1;
         else return 1;
     }
@@ -77,6 +76,7 @@ public class Deer extends Enemy {
             if (movement > 0) movement -= 1;
             else movement += 1;
         }
+        leader();
         super.x =pack[id];
     }
 }

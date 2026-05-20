@@ -29,6 +29,7 @@ public class ChunkManager {
     Texture deerTexture;
     Texture leader;
 
+    Array<Item> items;
     Item item;
 
     public ChunkManager(){
@@ -110,7 +111,7 @@ public class ChunkManager {
             enemies.add(new Deer(deerTexture, 20, 20, 0.1f, 0.1f, 5, deerX, i));
         }*/
 
-        item = new Item(alpine[6][0], 50, 0);
+        items =  new Array<>();
     }
 
     public float getFloor(float x, float w, float y){
@@ -197,34 +198,58 @@ public class ChunkManager {
     }
 
     public void spawn(){
+        float x = chunks.get(chunks.size-1).getX();
+        float y = chunks.get(chunks.size-1).getY();
+
         if(weight.spawn(biome)==1){
             float[] deerX = new  float[6];
-            float x = chunks.get(chunks.size-1).getX();
-            float y = chunks.get(chunks.size-1).getY();
             enemies.add(new Deer(leader, x, y, 0.25f, 0.25f, 5, deerX, 0));
             for(int i=1; i<5; i++) {
                 enemies.add(new Deer(deerTexture, x+(i*5), y+(i*5), 0.1f, 0.1f, 5, deerX, i));
             }
             System.out.println("Spawned Deer");
         }
+
+        if(weight.spawnItems(biome)==1){
+            items.add(new Item(alpine[6][0], x, y));
+            System.out.println("Spawned Item");
+        }
+
     }
 
-    public void updateEnemies(float delta, float floor, boolean attack, Player bear, Camera camera, Vector3 mouse){
-        for(int i=0; i<enemies.size; i++){
-            enemies.get(i).update(delta, floor, attack, bear.getCenter(), bear.getSwipeBox(), camera);
-            if(enemies.get(i).getHealth()==-1){
+    public void updateEnemies(float delta, float floor, boolean attack, Player player, Camera camera){
+        for(int i=0; i<enemies.size; i++){ if (Math.abs(player.getX()-enemies.get(i).getX())<=1280) {
+            enemies.get(i).update(delta, floor, attack, player.getCenter(), player.getSwipeBox(), camera);
+            if (enemies.get(i).getHealth() == -1) {
                 enemies.removeIndex(i);
                 i--;
             }
         }
-        item.update(delta, getFloor(item.getX(), item.getW(), item.getY()), bear, mouse);
+        }
     }
 
-    public void renderEnemies(Batch batch){
-        for(Enemy enemy : enemies){
-            enemy.render(batch);
+    public void renderEnemies(Batch batch, float playerX){
+        for(Enemy enemy : enemies) {
+            if (Math.abs(playerX - enemy.getX()) <= 1280) {
+                enemy.render(batch);
+            }
         }
-        item.render(batch);
+    }
+
+    public void updateItems(float delta, Player player, Vector3 mouse){
+        for(int i=0; i<items.size; i++) {
+            if (Math.abs(player.getX() - items.get(i).getX()) <= 1280) {
+                items.get(i).update(delta, getFloor(items.get(i).getX(), items.get(i).getW(), items.get(i).getY()), player, mouse);
+            }
+        }
+    }
+
+    public void renderItems(Batch batch, float playerX){
+        for(Item item : items) {
+            if (Math.abs(playerX - item.getX()) <= 640) {
+                item.render(batch);
+            }
+        }
     }
 
     public void dispose(){
