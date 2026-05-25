@@ -108,6 +108,7 @@ public class Player{
     public float getV() { return bearV; }
     public void setX(float X){bearX = X;}
     public void setY(float Y){bearY = Y;}
+    public void addX(float x){bearX += x;}
     public float getS() { return bearS; }
     public float getWidth() { return polyBear.getBoundingRectangle().getWidth();}
     public float getHeight() { return polyBear.getBoundingRectangle().getHeight();}
@@ -194,8 +195,8 @@ public class Player{
 
         bear.setPosition(bearX, bearY);
         polyBear.setPosition(bearX, bearY);
-        if(bearFace) swipeBox.setPosition(bearX, bearY);
-        else swipeBox.setPosition(bearX+(bear.getWidth()/2), bearY);
+        if(bearFace) swipeBox.setPosition(bearX-1, bearY);
+        else swipeBox.setPosition(bearX+(bear.getWidth()/2)+1, bearY);
     }
 
     public void render(SpriteBatch batch){

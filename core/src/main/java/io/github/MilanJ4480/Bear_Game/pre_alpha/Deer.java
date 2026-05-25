@@ -21,17 +21,21 @@ public class Deer extends Enemy {
     }
 
     public void death(){
-        if(id==0){
-            pack[pack.length-1] = pack[id];
-        }
+        pack[id] = Float.NaN;
+        System.out.println("DEAD" + pack[id]);
         super.death();
     }
 
     public void leader(){
-        if(pack[pack.length-1] == pack[0]){
+        System.out.println(pack[0]);
+        if(Float.isNaN(pack[0])){
             System.out.println("Deer " + id + " is the new Leader");
-            pack[pack.length-1]=0;
+            pack[0] = pack[id];
+            pack[id] = Float.NaN;
             id=0;
+            pack[pack.length-1] = id+1;
+
+            fear = false;
         }
     }
 
@@ -39,8 +43,10 @@ public class Deer extends Enemy {
         int l=0;
         int r=0;
         for(int i = 0; i < pack.length-1; i++){
-            if(pack[i] > bear) r++;
-            else l++;
+            if(!Float.isNaN(pack[i])){
+                if (pack[i] > bear) r++;
+                else l++;
+            }
         }
         if(l>r) return -1;
         else return 1;
@@ -48,7 +54,7 @@ public class Deer extends Enemy {
 
 
     public void move(float delta, float playerX) {
-
+        leader();
         float bear = Math.abs(playerX) - Math.abs(pack[id]);
         //System.out.println("bear: " + bear);
         if ((bear < -500 || bear > 500) && id==Math.abs(pack[pack.length - 1])-1) pack[pack.length - 1] = 0;
@@ -76,7 +82,6 @@ public class Deer extends Enemy {
             if (movement > 0) movement -= 1;
             else movement += 1;
         }
-        leader();
         super.x =pack[id];
     }
 }

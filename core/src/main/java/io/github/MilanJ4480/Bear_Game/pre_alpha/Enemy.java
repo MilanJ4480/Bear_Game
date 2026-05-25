@@ -70,6 +70,7 @@ public class Enemy{
 
     public void death(){
         health = -1;
+        System.out.println("DEATH" + health);
     }
 
     public int getHealth() { return health; }
@@ -131,7 +132,7 @@ public class Enemy{
             else hit = false;
             hitbox(x, y, getWidth(), getHeight(), camera);
 
-            if(health<0) death();
+            if(health<=0) death();
         }
 
     }

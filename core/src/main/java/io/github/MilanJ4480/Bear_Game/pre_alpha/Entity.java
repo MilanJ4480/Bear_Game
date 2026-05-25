@@ -25,6 +25,8 @@ public class Entity {
     private float ha;
     private float floor;
 
+    private boolean lock;
+
     public Entity(Texture texture, float x, float y, float w, float h) {
         this.entity = new Sprite(texture);
         this.x = x;
@@ -33,6 +35,8 @@ public class Entity {
         this.v=0;
         this.hv=0;
         this.ha=0;
+
+        lock = true;
 
         floor=0;
 
@@ -80,25 +84,33 @@ public class Entity {
 
     public void update(float delta, float f, Player player) {
         floor = f;
-        if (Intersector.overlapConvexPolygons(player.getPolygon(), hitbox, mtv)) {
+        if(Intersector.overlapConvexPolygons(player.getSwipeBox(), hitbox) && player.getAttack()) lock = false;
+        else if (Intersector.overlapConvexPolygons(player.getPolygon(), hitbox, mtv)) {
             if (player.getY() >= hitbox.getY()+h || mtv.normal.y>0.1) { //(player.getLeftX()<hitbox.getX()+w || player.getRightX()-5>hitbox.getX()))){
                 player.doGravity(false);
                 player.setV(0);
                 player.setJump(false);
+                lock = true;
 //                player.setY(hitbox.getY()+h);
 //                System.out.println("On Top");
             }
-            else if (mtv.normal.x > 0.1){//(player.getCenter()>hitbox.getX()+(w/2)) {
-                x -= mtv.depth; //((player.getS()*delta)+(1*delta)); //+ ((y-floor) * delta * player.getS());
-//                if (player.getLeftX()+5<hitbox.getX()+w) y += 236 * delta;
-                hv = -player.getS();
-                //player.doGravity(true);
+            else if (mtv.normal.x > 0.1){
+                if(lock){
+                    player.addX(player.getS()*delta);
+                }
+                else {
+                    x -= mtv.depth;
+                    hv = -player.getS();
+                }
             }
-            else if (mtv.normal.x < 0.1){//if (player.getCenter()<hitbox.getX()+(w/2)) {
-                x += mtv.depth;//((player.getS()*delta)+(1*delta)); //+ ((y-floor) * delta * player.getS());
-//                if (player.getRightX()-5>hitbox.getX()) y += 236 * delta;
-                hv = player.getS();
-                //player.doGravity(true);
+            else if (mtv.normal.x < 0.1){
+                if(lock){
+                    player.addX(-player.getS()*delta);
+                }
+                else {
+                    x += mtv.depth;
+                    hv = player.getS();
+                }
             }
         }
         else{
@@ -109,8 +121,16 @@ public class Entity {
 
         if (y==floor) v=0;
 
-        entity.setPosition(x, y);
-        hitbox.setPosition(x, y);
+        if(lock) {
+            entity.setPosition(x, y-5);
+            hitbox.setPosition(x, y-5);
+        }
+        else{
+            entity.setPosition(x, y);
+            hitbox.setPosition(x, y);
+        }
+
+
     }
 
     public void render(Batch batch) {

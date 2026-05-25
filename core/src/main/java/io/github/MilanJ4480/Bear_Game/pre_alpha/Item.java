@@ -33,6 +33,7 @@ public class Item {
     private boolean carry;
     private  boolean face;
     private boolean isCarry;
+    private boolean isHeld;
 
     public Item(TextureRegion texture, float x, float y) {
         this.item = new Sprite(texture);
@@ -57,6 +58,7 @@ public class Item {
         this.v=0;
         face=false;
         isCarry=false;
+        isHeld=false;
 
         load = 0;
         spacingX = 0.1f;
@@ -204,9 +206,12 @@ public class Item {
             }
         }
         else if((Intersector.overlapConvexPolygons(hitbox, player.getSwipeBox()) && Gdx.input.isKeyJustPressed(Input.Keys.E) && !player.getHolding()) || held){
-            if(held && Gdx.input.isKeyJustPressed(Input.Keys.E)) held=false;
+            if(held && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                held=false;
+            }
             else {
                 held=true;
+                isHeld=true;
                 player.setHolding(true);
             }
 
@@ -243,7 +248,10 @@ public class Item {
         }
         else {
             //System.out.println("free");
-            player.setHolding(false);
+            if(isHeld) {
+                isHeld=false;
+                player.setHolding(false);
+            }
             gravity(delta, f);
             //if (item.isFlipX() && item.isFlipY() && item.getRotation()==0) item.flip(false, true);
             //else if (!item.isFlipX() && !item.isFlipY()) item.flip(false, true);
