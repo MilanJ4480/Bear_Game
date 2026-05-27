@@ -24,6 +24,8 @@ public class Entity {
     private float hv;
     private float ha;
     private float floor;
+    private float r;
+    private float nr;
 
     private boolean lock;
 
@@ -82,9 +84,30 @@ public class Entity {
         x+=hv*delta;
     }
 
+    private void rotate(float delta){
+        if(r>0) {
+            entity.rotate(delta*r);
+            r+=delta*g;
+            if(r<=0) r=-1;
+        }
+        else if(r<0){
+            entity.rotate(delta*r);
+            r+=delta*g;
+            if((entity.getRotation()<5 && entity.getRotation()>-5) || entity.getRotation()==90) {
+                entity.setRotation(0);
+                r=0;
+            }
+        }
+    }
+
     public void update(float delta, float f, Player player) {
         floor = f;
-        if(Intersector.overlapConvexPolygons(player.getSwipeBox(), hitbox) && player.getAttack()) lock = false;
+        rotate(delta);
+        if(Intersector.overlapConvexPolygons(player.getSwipeBox(), hitbox) && player.getAttack() && player.getY()<hitbox.getY()+h-5){
+            lock = false;
+            r+=25;
+            nr=-r;
+        }
         else if (Intersector.overlapConvexPolygons(player.getPolygon(), hitbox, mtv)) {
             if (player.getY() >= hitbox.getY()+h || mtv.normal.y>0.1) { //(player.getLeftX()<hitbox.getX()+w || player.getRightX()-5>hitbox.getX()))){
                 player.doGravity(false);

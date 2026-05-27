@@ -93,7 +93,7 @@ public class Main extends ApplicationAdapter {
         player.update(chunkManager.getFloor(player.getX(), player.getWidth(), player.getY()), delta);
         entity.update(delta, chunkManager.getFloor(entity.getX(), entity.getWidth(), entity.getY()), player);
         chunkManager.update(player.getX());
-        enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox(), camera);
+        //enemy.update(delta, chunkManager.getFloor(enemy.getX(), enemy.getWidth(), enemy.getY()), player.getAttack(), player.getCenter(), player.getSwipeBox(), camera);
         chunkManager.updateEnemies(delta, chunkManager.getFloor(20, 20, 0), player.getAttack(),  player, camera);
         chunkManager.updateItems(delta, player, mouse);
 
@@ -109,7 +109,7 @@ public class Main extends ApplicationAdapter {
         player.render(batch);
         chunkManager.renderPlantsFront(batch, player.getX());
         entity.render(batch);
-        enemy.render(batch);
+        //enemy.render(batch);
         chunkManager.renderEnemies(batch, player.getX());
         chunkManager.renderItems(batch, player.getX());
         //cave.render(batch);

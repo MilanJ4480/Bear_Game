@@ -253,12 +253,7 @@ public class Item {
                 player.setHolding(false);
             }
             gravity(delta, f);
-            //if (item.isFlipX() && item.isFlipY() && item.getRotation()==0) item.flip(false, true);
-            //else if (!item.isFlipX() && !item.isFlipY()) item.flip(false, true);
-            //item.setRotation(0);
         }
-        //if ((!carry || held) && face && !item.isFlipY()) item.flip(false, true);
-        //else if  (!carry && !face && item.isFlipY()) item.flip(false, true);
 
         item.setPosition(x, y);
         hitbox.setPosition(x, y);
