@@ -117,8 +117,9 @@ public class Main extends ApplicationAdapter {
         batch.end();
 
         //hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
-        //if (player.getAttack()) hitbox(player.getSwipeBox().getX(), player.getSwipeBox().getY(), player.getSwipeBox().getBoundingRectangle().getWidth(), player.getSwipeBox().getBoundingRectangle().getHeight());
+        if (player.getAttack()) hitbox(player.getSwipeBox().getX(), player.getSwipeBox().getY(), player.getSwipeBox().getBoundingRectangle().getWidth(), player.getSwipeBox().getBoundingRectangle().getHeight());
         //hitbox(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+        hitbox(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
     }
 
     @Override

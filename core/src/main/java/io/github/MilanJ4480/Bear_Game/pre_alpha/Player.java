@@ -22,6 +22,7 @@ public class Player{
 //    private Rectangle rectBear;
     private Polygon polyBear;
     private Polygon swipeBox;
+    private Polygon largeSwipeBox;
 
 //    floats && ints
     private float stateTime;
@@ -74,6 +75,14 @@ public class Player{
         };
         swipeBox = new Polygon(swipeVertices);
 
+        float[] largeSwipeVertices = new float[] {
+            -5, 0,
+            polyBear.getBoundingRectangle().getWidth()/2+5, 0,
+            polyBear.getBoundingRectangle().getWidth()/2+5, polyBear.getBoundingRectangle().getHeight()/2,
+            -5, polyBear.getBoundingRectangle().getHeight()/2
+        };
+        largeSwipeBox = new Polygon(largeSwipeVertices);
+
         load = -1;
         bearS = 75;
         bearV = 0;
@@ -92,6 +101,7 @@ public class Player{
     public float getY(){ return polyBear.getY(); }
     public Polygon getPolygon() { return polyBear; }
     public Polygon getSwipeBox(){ return swipeBox;}
+    public Polygon getLargeSwipeBox() { return largeSwipeBox;}
 
 
     public void setHolding(boolean holding){ this.holding=holding; }
@@ -151,7 +161,7 @@ public class Player{
         if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=750;
         else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=175;
         else bearS=75;
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && bearAnimation==bearWalk1){
+        if ((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) && bearAnimation==bearWalk1){
             swapAnimation(bearSwipe, false);
             attack = true;
         }
@@ -195,8 +205,14 @@ public class Player{
 
         bear.setPosition(bearX, bearY);
         polyBear.setPosition(bearX, bearY);
-        if(bearFace) swipeBox.setPosition(bearX-1, bearY);
-        else swipeBox.setPosition(bearX+(bear.getWidth()/2)+1, bearY);
+        if(bearFace) {
+            swipeBox.setPosition(bearX-1, bearY);
+            largeSwipeBox.setPosition(bearX-1, bearY);
+        }
+        else {
+            swipeBox.setPosition(bearX+(bear.getWidth()/2)+1, bearY);
+            largeSwipeBox.setPosition(bearX+(bear.getWidth()/2)+1, bearY);
+        }
     }
 
     public void render(SpriteBatch batch){

@@ -25,7 +25,6 @@ public class Entity {
     private float ha;
     private float floor;
     private float r;
-    private float nr;
 
     private boolean lock;
 
@@ -76,37 +75,58 @@ public class Entity {
     }
 
     private void horizontalVelocity(float delta, boolean g){
-        if (x<=0 || g) ha = 500;
+        if (g) ha = 500;
         else ha = 10;
-        if(hv<-0.1) hv+=ha*delta;
-        else if (hv>0.1) hv-=ha*delta;
+        if(hv<-1) hv+=ha*delta;
+        else if (hv>1) hv-=ha*delta;
         else hv = 0;
         x+=hv*delta;
     }
 
     private void rotate(float delta){
-        if(r>0) {
-            entity.rotate(delta*r);
-            r+=delta*g;
-            if(r<=0) r=-1;
-        }
-        else if(r<0){
-            entity.rotate(delta*r);
-            r+=delta*g;
-            if((entity.getRotation()<5 && entity.getRotation()>-5) || entity.getRotation()==90) {
+        //if(r>0) {
+            //entity.rotate(delta*r);
+            //hitbox.rotate(delta*r);
+            //r+=delta*g;//*Math.signum(r);
+            //if(r<=0) r=-1;
+        //}
+        //else if(r<0){
+        if(r!=0) {
+            //System.out.println(entity.getRotation());
+            entity.rotate(delta * r);
+            hitbox.rotate(delta * r);
+            if(entity.getOriginX()==0) r += delta * g;
+            else r -= delta * g;
+            if ((entity.getRotation() > 0.1 && entity.getOriginX()==entity.getWidth()) || (entity.getRotation() < -0.1 && entity.getOriginX()==0)) {
                 entity.setRotation(0);
-                r=0;
+                hitbox.setRotation(0);
+                r = 0;
+                lock = false;
+            }
+            else if (entity.getRotation() < 91 && entity.getRotation() > 82) {
+                entity.setRotation(90);
+                hitbox.setRotation(90);
+                r = 0;
             }
         }
+        //}
     }
 
     public void update(float delta, float f, Player player) {
         floor = f;
         rotate(delta);
-        if(Intersector.overlapConvexPolygons(player.getSwipeBox(), hitbox) && player.getAttack() && player.getY()<hitbox.getY()+h-5){
-            lock = false;
-            r+=25;
-            nr=-r;
+        if(Intersector.overlapConvexPolygons(player.getLargeSwipeBox(), hitbox) && player.getAttack() && player.getY()<hitbox.getY()+h-5){
+            lock = true;
+            if(player.getFace()) {
+                hitbox.setOrigin(0, 0);
+                entity.setOrigin(0, 0);
+                r+=25;
+            }
+            else{
+                hitbox.setOrigin(entity.getWidth(), 0);
+                entity.setOrigin(entity.getWidth(), 0);
+                r-=25;
+            }
         }
         else if (Intersector.overlapConvexPolygons(player.getPolygon(), hitbox, mtv)) {
             if (player.getY() >= hitbox.getY()+h || mtv.normal.y>0.1) { //(player.getLeftX()<hitbox.getX()+w || player.getRightX()-5>hitbox.getX()))){
@@ -114,8 +134,6 @@ public class Entity {
                 player.setV(0);
                 player.setJump(false);
                 lock = true;
-//                player.setY(hitbox.getY()+h);
-//                System.out.println("On Top");
             }
             else if (mtv.normal.x > 0.1){
                 if(lock){
