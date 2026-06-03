@@ -49,6 +49,8 @@ public class Item {
         };
         this.hitbox = new Polygon(vertices);
 
+        hitbox.setOrigin(0, 0);
+
         this.x = x;
         this.y = y;
         this.w = item.getWidth();
@@ -114,8 +116,9 @@ public class Item {
             load = player.getLoad();
             item.setRotation(0);
             hitbox.setRotation(0);
-            if (face) x = player.getX() + player.getWidth() * (1 / 5f);
-            else x = player.getX() + player.getWidth() * (7 / 10f) - w;
+            //if (face) x = player.getX() + player.getWidth() * (1 / 5f);
+            //else x = player.getX() + player.getWidth() * (7 / 10f) - w;
+            x = getCarryX(player.getFrame(), player);
             y = player.getY() + player.getHeight() * (4 / 5f) + (h * load * spacingY);
 
             if (face && !item.isFlipX()) item.flip(true, false);
@@ -128,12 +131,12 @@ public class Item {
         if(face) xf = getCarryX(player.getFrame(), player);
         else xf = getCarryX(player.getFrame(), player) + (w);
         float yf;
-        if(face) yf = player.getY() + player.getHeight()*(4/5f)+ (h * load * spacingY);
-        else yf = player.getY() + player.getHeight()+ (h * load * spacingY);
+        if(face) yf = player.getY() + player.getHeight()*(4/5f) + (h * load * spacingY);
+        else yf = player.getY() + player.getHeight()*(4/5f) + (h * load * spacingY);
 
         float diffX = xf-x;
 
-        if ((diffX<5 && diffX>-5) && y == yf && ((face && item.getRotation()==0) || (!face && item.getRotation() < 181 && item.getRotation() > 179))) return true;
+        if ((diffX<1 && diffX>-1) && y == yf && ((face && item.getRotation()==0) || (!face && item.getRotation() < 181 && item.getRotation() > 179))) return true;
         else {
             float r;
             if(face) r = item.getRotation();
@@ -161,16 +164,20 @@ public class Item {
 
     public float getCarryX(int frame, Player player){
         float x;
+        int f;
 
-        if(face) x = player.getX() + player.getWidth()*(1/5f) + (w * spacingX * load);
-        else x = player.getX() + player.getWidth()*(7/10f) - (w * load * spacingX) - (w);
-        if(frame == 0 || frame == 17) x+=1;
-        else if(frame == 1 || frame == 16) x+=2;
-        else if(frame == 2 || frame == 15 || frame == 3 || frame == 14) x+=3;
-        else if(frame == 4 || frame == 13) x+=4;
-        else if(frame == 5 || frame == 12) x+=5;
-        else if(frame == 6 || frame == 11) x+=6;
-        else if(frame > 6) x+=7;
+        if(player.getFace()) f=1;
+        else f=-1;
+
+        if(player.getFace()) x = player.getX() + player.getWidth()*(1/5f) + (w * spacingX * load);
+        else x = player.getX() + player.getWidth() - w - player.getWidth()*(1/5f) - (w * load * spacingX);
+        if(frame == 0 || frame == 17) x+=f;
+        else if(frame == 1 || frame == 16) x+=2*f;
+        else if(frame == 2 || frame == 15 || frame == 3 || frame == 14) x+=3*f;
+        else if(frame == 4 || frame == 13) x+=4*f;
+        else if(frame == 5 || frame == 12) x+=5*f;
+        else if(frame == 6 || frame == 11) x+=6*f;
+        else if(frame > 6) x+=7*f;
 
         return x;
     }
@@ -216,8 +223,10 @@ public class Item {
             }
 
             if(playerFace) {
+                item.setOrigin(1, h/2);
                 if(!face) item.setRotation(MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , -Math.abs(mouse.x-x)));
                 x = player.getX();//-swipeBox.getBoundingRectangle().getWidth();
+                //y = player.getY()+player.getHeight()/2-8;
                 face=true;
                 if (!item.isFlipX()) item.flip(true, false);
                 if (!item.isFlipY()) item.flip(false, true);
@@ -228,11 +237,12 @@ public class Item {
                     item.flip(false, true);
                     //setCarry(mouse, player);
                 }
-                //item.setOrigin(0, 0);
             }
             else {
+                item.setOrigin(1, h/2);
                 if(face) item.setRotation(MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , Math.abs(mouse.x-x)));
                 x = player.getX()+player.getWidth();
+                //y = player.getY()+player.getHeight()/2-8;
                 face=false;
                 if (!item.isFlipX()) item.flip(true, false);
                 if (item.isFlipY()) item.flip(false, true);
@@ -243,9 +253,10 @@ public class Item {
                     //setCarry(mouse, player);
                 }
             }
-            if(!isCarry) y = player.getY()+player.getHeight()/2;
+            if(!isCarry) y = player.getY()+player.getHeight()/2-8;
             rotate(-delta, mouse);
         }
+
         else {
             //System.out.println("free");
             if(isHeld) {

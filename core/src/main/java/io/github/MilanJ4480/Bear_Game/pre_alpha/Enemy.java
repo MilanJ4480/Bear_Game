@@ -130,7 +130,7 @@ public class Enemy{
                 playerContact(swipe);
             }
             else hit = false;
-            hitbox(x, y, getWidth(), getHeight(), camera);
+            //hitbox(x, y, getWidth(), getHeight(), camera);
 
             if(health<=0) death();
         }

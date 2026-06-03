@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Polygon;
 
 import java.awt.*;
 
@@ -80,6 +81,14 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.end();
     }
 
+    public void hitbox(Polygon polygon) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.polygon(polygon.getTransformedVertices());
+        shapeRenderer.end();
+    }
+
     float stateTime = 0f;
     @Override
     public void render() {
@@ -116,10 +125,14 @@ public class Main extends ApplicationAdapter {
 
         batch.end();
 
-        //hitbox(player.getX(), player.getY(), player.getWidth(), player.getHeight());
-        if (player.getAttack()) hitbox(player.getSwipeBox().getX(), player.getSwipeBox().getY(), player.getSwipeBox().getBoundingRectangle().getWidth(), player.getSwipeBox().getBoundingRectangle().getHeight());
-        //hitbox(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
-        hitbox(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
+        hitbox(player.getPolygon());
+
+        if (player.getAttack()) {
+            hitbox(player.getLargeSwipeBox());
+        }
+
+        hitbox(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+        hitbox(entity.getPolygon());
     }
 
     @Override

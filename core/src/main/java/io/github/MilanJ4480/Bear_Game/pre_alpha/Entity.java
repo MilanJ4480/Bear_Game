@@ -1,5 +1,7 @@
 package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -112,21 +114,26 @@ public class Entity {
         //}
     }
 
+    private void setSwipeOrigin(Intersector.MinimumTranslationVector mtv){
+        if(mtv.normal.x>0.1) {
+            hitbox.setOrigin(entity.getWidth(), 0);
+            entity.setOrigin(entity.getWidth(), 0);
+            r-= 100*Math.abs(1 + (r/100));
+        }
+        else if(mtv.normal.x<0.1) {
+            hitbox.setOrigin(0, 0);
+            entity.setOrigin(0, 0);
+            r+= 100*Math.abs(1 + (r/100));
+        }
+
+    }
+
     public void update(float delta, float f, Player player) {
         floor = f;
         rotate(delta);
-        if(Intersector.overlapConvexPolygons(player.getLargeSwipeBox(), hitbox) && player.getAttack() && player.getY()<hitbox.getY()+h-5){
-            lock = true;
-            if(player.getFace()) {
-                hitbox.setOrigin(0, 0);
-                entity.setOrigin(0, 0);
-                r+=25;
-            }
-            else{
-                hitbox.setOrigin(entity.getWidth(), 0);
-                entity.setOrigin(entity.getWidth(), 0);
-                r-=25;
-            }
+        if(Intersector.overlapConvexPolygons(hitbox, player.getLargeSwipeBox(), mtv) && player.getAttack() && player.getY()<hitbox.getY()+h-5 && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            //lock = true;
+            setSwipeOrigin(mtv);
         }
         else if (Intersector.overlapConvexPolygons(player.getPolygon(), hitbox, mtv)) {
             if (player.getY() >= hitbox.getY()+h || mtv.normal.y>0.1) { //(player.getLeftX()<hitbox.getX()+w || player.getRightX()-5>hitbox.getX()))){
@@ -163,8 +170,8 @@ public class Entity {
         if (y==floor) v=0;
 
         if(lock) {
-            entity.setPosition(x, y-5);
-            hitbox.setPosition(x, y-5);
+            entity.setPosition(x, y-2);
+            hitbox.setPosition(x, y-2);
         }
         else{
             entity.setPosition(x, y);

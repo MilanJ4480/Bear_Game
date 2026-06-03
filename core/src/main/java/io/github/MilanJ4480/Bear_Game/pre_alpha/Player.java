@@ -78,8 +78,8 @@ public class Player{
         float[] largeSwipeVertices = new float[] {
             -5, 0,
             polyBear.getBoundingRectangle().getWidth()/2+5, 0,
-            polyBear.getBoundingRectangle().getWidth()/2+5, polyBear.getBoundingRectangle().getHeight()/2,
-            -5, polyBear.getBoundingRectangle().getHeight()/2
+            polyBear.getBoundingRectangle().getWidth()/2+5, polyBear.getBoundingRectangle().getHeight()/2+5,
+            -5, polyBear.getBoundingRectangle().getHeight()/2+5
         };
         largeSwipeBox = new Polygon(largeSwipeVertices);
 
