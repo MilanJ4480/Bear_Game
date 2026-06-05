@@ -22,12 +22,12 @@ public class Deer extends Enemy {
 
     public void death(){
         pack[id] = Float.NaN;
-        System.out.println("DEAD" + pack[id]);
+        //System.out.println("DEAD" + pack[id]);
         super.death();
     }
 
     public void leader(){
-        System.out.println(pack[0]);
+        //System.out.println(pack[0]);
         if(Float.isNaN(pack[0])){
             System.out.println("Deer " + id + " is the new Leader");
             pack[0] = pack[id];

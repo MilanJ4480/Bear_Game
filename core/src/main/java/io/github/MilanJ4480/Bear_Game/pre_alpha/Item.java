@@ -24,6 +24,8 @@ public class Item {
 
     private float g;
     private float v;
+    private float sweep;
+    private float sweepDiff;
 
     private int load;
     private float spacingX;
@@ -38,7 +40,7 @@ public class Item {
     public Item(TextureRegion texture, float x, float y) {
         this.item = new Sprite(texture);
 
-        item.setOrigin(0, 0);
+
         item.flip(true, false);
 
         float[] vertices = new float[] {
@@ -49,7 +51,6 @@ public class Item {
         };
         this.hitbox = new Polygon(vertices);
 
-        hitbox.setOrigin(0, 0);
 
         this.x = x;
         this.y = y;
@@ -61,15 +62,22 @@ public class Item {
         face=false;
         isCarry=false;
         isHeld=false;
+        sweep = 0;
 
         load = 0;
         spacingX = 0.1f;
         spacingY = 0.25f;
+
+        item.setOrigin(1, h/2);
+        hitbox.setOrigin(1, h/2);
     }
 
     public float getX() { return x; }
     public float getW() { return w; }
     public float getY() { return y; }
+    public float getH() { return h; }
+    public boolean getHeld() { return held; }
+    public Polygon getHitbox() { return hitbox; }
 
     private void gravity(float delta, float floor){
         if (y<=floor){
@@ -83,15 +91,39 @@ public class Item {
     }
 
     private void rotate(float delta, Vector3 mouse){
-        float a = item.getRotation() % 360;
+        float a = Math.round(item.getRotation() % 360);
 
         float b;
         if(Gdx.input.isKeyPressed(Input.Keys.DPAD_UP)) b = 90;
         else if(Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN)) b = -90;
         else if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT) && face) b = 180;
         else if(Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT) && !face) b = 0;
-        else if (face) b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y - y), -Math.abs(mouse.x - x));
-        else b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y - y), Math.abs(mouse.x - x));
+        else if (face) {
+            if (sweep == 0) {
+                b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y - y), -Math.abs(mouse.x - x));
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+                    sweep = b;
+                    sweepDiff = a-b;
+                    if (sweepDiff > 180) sweepDiff -= 360;
+                    if (sweepDiff < -180) sweepDiff += 360;
+                    if (Math.abs(sweepDiff) < 25) sweep = 0;
+                }
+            }
+            else b = sweep;
+        }
+        else {
+            if (sweep == 0) {
+                b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y - y), Math.abs(mouse.x - x));
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+                    sweep = b;
+                    sweepDiff = a-b;
+                    if (sweepDiff > 180) sweepDiff -= 360;
+                    if (sweepDiff < -180) sweepDiff += 360;
+                    if (Math.abs(sweepDiff) < 25) sweep = 0;
+                }
+            }
+            else b=sweep;
+        }
         //System.out.println(a);
         //System.out.println(b);
         //if (b>90 || b<-90) b -= b-90;
@@ -101,7 +133,18 @@ public class Item {
         if (diff > 180) diff -= 360;
         if (diff < -180) diff += 360;
 
-        float r = delta * diff * 5;
+        float r;
+
+        if (sweep !=0){
+            r = (float) ((150 + ( (450-150) * Math.pow(1-Math.abs(diff/sweepDiff), 0.5) )) * Math.signum(diff) * delta);
+            if(diff < 5 && diff > -5) sweep = 0;
+        }
+        else r = delta * diff * 5;
+        //rotation += delta * Math.signum(diff) * 5;
+
+        //if (diff < 0.1 && diff > -0.1) rotation = 0;
+
+        System.out.println("sweep: " + sweep + "\n diff: " + diff + "\n r: " + r + "\n sweepDiff: " + sweepDiff);
 
         if (Math.abs(diff) > 5) {
             item.rotate(r);
@@ -144,8 +187,14 @@ public class Item {
             if (r > 180) r -= 360;
             if (r < -180) r += 360;
 
-            if(face && (r<5 && r>-5)) item.setRotation(0);
-            else if(!face && (r<185 && r>175)) item.setRotation(180);
+            if(face && (r<5 && r>-5)) {
+                item.setRotation(0);
+                hitbox.setRotation(0);
+            }
+            else if(!face && (r<185 && r>175)) {
+                item.setRotation(180);
+                hitbox.setRotation(180);
+            }
             else {
                 item.rotate(delta * -r * 10);
                 hitbox.rotate(delta * -r * 10);
@@ -215,6 +264,7 @@ public class Item {
         else if((Intersector.overlapConvexPolygons(hitbox, player.getSwipeBox()) && Gdx.input.isKeyJustPressed(Input.Keys.E) && !player.getHolding()) || held){
             if(held && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                 held=false;
+                sweep = 0;
             }
             else {
                 held=true;
@@ -223,8 +273,11 @@ public class Item {
             }
 
             if(playerFace) {
-                item.setOrigin(1, h/2);
-                if(!face) item.setRotation(MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , -Math.abs(mouse.x-x)));
+                if(!face) {
+                    float rx = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , -Math.abs(mouse.x-x));
+                    item.setRotation(rx);
+                    hitbox.setRotation(rx);
+                }
                 x = player.getX();//-swipeBox.getBoundingRectangle().getWidth();
                 //y = player.getY()+player.getHeight()/2-8;
                 face=true;
@@ -234,13 +287,17 @@ public class Item {
                 if(mouse.x>player.getX()+player.getWidth() && ((item.getRotation()+360)%360>0 && (item.getRotation()+360)%360<180)){
                     carry = true;
                     held = false;
+                    sweep = 0;
                     item.flip(false, true);
                     //setCarry(mouse, player);
                 }
             }
             else {
-                item.setOrigin(1, h/2);
-                if(face) item.setRotation(MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , Math.abs(mouse.x-x)));
+                if(face) {
+                    float rx = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y-y) , Math.abs(mouse.x-x));
+                    item.setRotation(rx);
+                    hitbox.setRotation(rx);
+                }
                 x = player.getX()+player.getWidth();
                 //y = player.getY()+player.getHeight()/2-8;
                 face=false;
@@ -249,6 +306,7 @@ public class Item {
                 if(mouse.x<player.getX() && (item.getRotation()%360>0 && item.getRotation()%360<180)) {
                     carry = true;
                     held = false;
+                    sweep = 0;
                     item.flip(false, true);
                     //setCarry(mouse, player);
                 }

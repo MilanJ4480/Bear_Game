@@ -161,7 +161,7 @@ public class Player{
         if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=750;
         else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=175;
         else bearS=75;
-        if ((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) && bearAnimation==bearWalk1){
+        if ((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) && bearAnimation==bearWalk1 && !holding){
             swapAnimation(bearSwipe, false);
             attack = true;
         }

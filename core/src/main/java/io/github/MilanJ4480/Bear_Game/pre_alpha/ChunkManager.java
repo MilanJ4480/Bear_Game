@@ -218,13 +218,23 @@ public class ChunkManager {
     }
 
     public void updateEnemies(float delta, float floor, boolean attack, Player player, Camera camera){
-        for(int i=0; i<enemies.size; i++){ if (Math.abs(player.getX()-enemies.get(i).getX())<=1280) {
-            enemies.get(i).update(delta, floor, attack, player.getCenter(), player.getSwipeBox(), camera);
-            if (enemies.get(i).getHealth() == -1) {
-                enemies.removeIndex(i);
-                i--;
+        for(int i=0; i<enemies.size; i++){
+            if (Math.abs(player.getX()-enemies.get(i).getX())<=1280) {
+
+                enemies.get(i).update(delta, floor, attack, player.getCenter(), player.getSwipeBox(), camera);
+
+                for(int j=0; j < items.size; j++){
+                    if (Math.abs(player.getX()-items.get(j).getX())<=1280 && items.get(j).getHeld()) {
+                        enemies.get(i).damageContact(items.get(j).getHitbox());
+                    }
+                }
+
+                if (enemies.get(i).getHealth() == -1) {
+                    enemies.removeIndex(i);
+                    i--;
+                }
+
             }
-        }
         }
     }
 
@@ -234,6 +244,10 @@ public class ChunkManager {
                 enemy.render(batch);
             }
         }
+    }
+
+    public Array<Item> itemList(){
+        return items;
     }
 
     public void updateItems(float delta, Player player, Vector3 mouse){

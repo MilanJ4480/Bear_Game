@@ -131,6 +131,10 @@ public class Main extends ApplicationAdapter {
             hitbox(player.getLargeSwipeBox());
         }
 
+        for(Item i : chunkManager.itemList()){
+            hitbox(i.getHitbox());
+        }
+
         hitbox(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
         hitbox(entity.getPolygon());
     }

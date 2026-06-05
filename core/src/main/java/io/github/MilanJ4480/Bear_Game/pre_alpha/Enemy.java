@@ -83,8 +83,8 @@ public class Enemy{
         shapeRenderer.end();
     }
 
-    public void playerContact(Polygon swipe){
-        if(!hit && Intersector.overlapConvexPolygons(hitbox, swipe)) health -= 1;
+    public void damageContact(Polygon polygon){
+        if(!hit && Intersector.overlapConvexPolygons(hitbox, polygon)) health -= 1;
         hit = true;
     }
 
@@ -127,7 +127,7 @@ public class Enemy{
             hitbox.setPosition(x, y);
             entity.setPosition(x, y);
             if(attack) {
-                playerContact(swipe);
+                damageContact(swipe);
             }
             else hit = false;
             //hitbox(x, y, getWidth(), getHeight(), camera);
