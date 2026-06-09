@@ -67,6 +67,7 @@ public class Enemy{
     public float getX() { return x; }
     public float getY() { return y; }
     public float getTexture() { return t; }
+    public boolean getHit() { return hit; }
 
     public void death(){
         health = -1;
@@ -86,6 +87,14 @@ public class Enemy{
     public void damageContact(Polygon polygon){
         if(!hit && Intersector.overlapConvexPolygons(hitbox, polygon)) health -= 1;
         hit = true;
+    }
+
+    public void damageContact(Item item){
+        if(!hit && Intersector.overlapConvexPolygons(hitbox, item.getHitbox())) {
+            health -= 1;
+            item.hit();
+            hit = true;
+        }
     }
 
     public void move(float delta, float playerX){

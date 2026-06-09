@@ -2,6 +2,7 @@ package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,6 +16,7 @@ public class Item {
     private Sprite item;
     private Polygon hitbox;
     private Intersector.MinimumTranslationVector mtv;
+    private Sound swoosh;
 
 
     private float x;
@@ -26,6 +28,7 @@ public class Item {
     private float v;
     private float sweep;
     private float sweepDiff;
+    private float startSweep;
 
     private int load;
     private float spacingX;
@@ -36,9 +39,12 @@ public class Item {
     private  boolean face;
     private boolean isCarry;
     private boolean isHeld;
+    private boolean hit;
 
     public Item(TextureRegion texture, float x, float y) {
         this.item = new Sprite(texture);
+
+        swoosh = Gdx.audio.newSound(Gdx.files.internal("swoosh.mp3"));
 
 
         item.flip(true, false);
@@ -63,6 +69,7 @@ public class Item {
         isCarry=false;
         isHeld=false;
         sweep = 0;
+        hit = false;
 
         load = 0;
         spacingX = 0.1f;
@@ -78,6 +85,24 @@ public class Item {
     public float getH() { return h; }
     public boolean getHeld() { return held; }
     public Polygon getHitbox() { return hitbox; }
+    public void hit() {
+        hit = true;
+        sweep = 0;
+
+
+        //sweepDiff*=-1;
+
+        //sweep=startSweep;
+
+        //sweepDiff = item.getRotation() - sweep;
+        //if (sweepDiff > 180) sweepDiff -= 360;
+        //if (sweepDiff < -180) sweepDiff += 360;
+    }
+    public boolean getHit() { return hit; }
+    public boolean sweeping() {
+        if(sweep!=0) return true;
+        else return false;
+    }
 
     private void gravity(float delta, float floor){
         if (y<=floor){
@@ -104,9 +129,11 @@ public class Item {
                 if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
                     sweep = b;
                     sweepDiff = a-b;
+                    startSweep=a;
                     if (sweepDiff > 180) sweepDiff -= 360;
                     if (sweepDiff < -180) sweepDiff += 360;
                     if (Math.abs(sweepDiff) < 25) sweep = 0;
+                    else swoosh.setPitch(swoosh.play(), 3.0f);
                 }
             }
             else b = sweep;
@@ -117,9 +144,11 @@ public class Item {
                 if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
                     sweep = b;
                     sweepDiff = a-b;
+                    startSweep=a;
                     if (sweepDiff > 180) sweepDiff -= 360;
                     if (sweepDiff < -180) sweepDiff += 360;
                     if (Math.abs(sweepDiff) < 25) sweep = 0;
+                    else swoosh.setPitch(swoosh.play(), 3.0f);
                 }
             }
             else b=sweep;
@@ -128,25 +157,39 @@ public class Item {
         //System.out.println(b);
         //if (b>90 || b<-90) b -= b-90;
 
+        if(hit) {
+            b = startSweep;
+        }
+
         float diff = a - b;
 
         if (diff > 180) diff -= 360;
         if (diff < -180) diff += 360;
 
+        if(hit && Math.abs(diff)<5) {
+            hit = false;
+        }
+
         float r;
 
         if (sweep !=0){
-            r = (float) ((150 + ( (450-150) * Math.pow(1-Math.abs(diff/sweepDiff), 0.5) )) * Math.signum(diff) * delta);
-            if(diff < 5 && diff > -5) sweep = 0;
+            System.out.println(diff);
+            r = (float) ((150 + ( (450-150) * Math.pow(Math.abs( 1-Math.abs(diff/sweepDiff) ), 0.5) )) * Math.signum(sweepDiff) * delta);
+
+            if(!hit && diff>-sweepDiff-5 && diff<-sweepDiff+5) {
+                sweep = 0;
+            }
+
+            //if((sweepDiff>=0 && item.getRotation()<=-sweepDiff) || (sweepDiff<=0 && item.getRotation()>=-sweepDiff)) sweep=0;
         }
         else r = delta * diff * 5;
         //rotation += delta * Math.signum(diff) * 5;
 
         //if (diff < 0.1 && diff > -0.1) rotation = 0;
 
-        System.out.println("sweep: " + sweep + "\n diff: " + diff + "\n r: " + r + "\n sweepDiff: " + sweepDiff);
+        //System.out.println("sweep: " + sweep + "\n diff: " + diff + "\n r: " + r + "\n sweepDiff: " + sweepDiff);
 
-        if (Math.abs(diff) > 5) {
+        if ((Math.abs(diff) > 5 && sweep==0) || sweep!=0) {
             item.rotate(r);
             hitbox.rotate(r);
         }

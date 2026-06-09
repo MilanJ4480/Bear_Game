@@ -1,5 +1,7 @@
 package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -218,14 +220,23 @@ public class ChunkManager {
     }
 
     public void updateEnemies(float delta, float floor, boolean attack, Player player, Camera camera){
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.M)){
+            float[] deerX = new  float[6];
+            enemies.add(new Deer(leader, player.getX(), player.getY(), 0.25f, 0.25f, 5, deerX, 0));
+            for(int i=1; i<5; i++) {
+                enemies.add(new Deer(deerTexture, player.getX()+(i*5), player.getY()+(i*5), 0.1f, 0.1f, 5, deerX, i));
+            }
+        }
+
         for(int i=0; i<enemies.size; i++){
             if (Math.abs(player.getX()-enemies.get(i).getX())<=1280) {
 
                 enemies.get(i).update(delta, floor, attack, player.getCenter(), player.getSwipeBox(), camera);
 
                 for(int j=0; j < items.size; j++){
-                    if (Math.abs(player.getX()-items.get(j).getX())<=1280 && items.get(j).getHeld()) {
-                        enemies.get(i).damageContact(items.get(j).getHitbox());
+                    if (Math.abs(player.getX()-items.get(j).getX())<=1280 && items.get(j).getHeld() && items.get(j).sweeping() && !items.get(j).getHit()) {
+                        enemies.get(i).damageContact(items.get(j));
                     }
                 }
 
