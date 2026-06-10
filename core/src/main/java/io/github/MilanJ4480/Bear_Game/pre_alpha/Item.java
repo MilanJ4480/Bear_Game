@@ -87,7 +87,11 @@ public class Item {
     public Polygon getHitbox() { return hitbox; }
     public void hit() {
         hit = true;
-        sweep = 0;
+        startSweep = sweepDiff + sweepDiff;
+
+        if (startSweep > 180) startSweep -= 360;
+        if (startSweep < -180) startSweep += 360;;
+        //sweep = 0;
 
 
         //sweepDiff*=-1;
@@ -124,7 +128,7 @@ public class Item {
         else if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT) && face) b = 180;
         else if(Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT) && !face) b = 0;
         else if (face) {
-            if (sweep == 0) {
+            if (sweep == 0 && !hit) {
                 b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y - y), -Math.abs(mouse.x - x));
                 if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
                     sweep = b;
@@ -139,7 +143,7 @@ public class Item {
             else b = sweep;
         }
         else {
-            if (sweep == 0) {
+            if (sweep == 0 && !hit) {
                 b = MathUtils.radiansToDegrees * MathUtils.atan2((mouse.y - y), Math.abs(mouse.x - x));
                 if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
                     sweep = b;
@@ -157,27 +161,48 @@ public class Item {
         //System.out.println(b);
         //if (b>90 || b<-90) b -= b-90;
 
-        if(hit) {
+        /*if(hit) {
             b = startSweep;
-        }
+            System.out.println("drawback");
+        }*/
 
         float diff = a - b;
 
         if (diff > 180) diff -= 360;
         if (diff < -180) diff += 360;
 
-        if(hit && Math.abs(diff)<5) {
+        //if(hit) System.out.println(diff);
+
+        /*if(hit && Math.abs(diff)<=0.2) {
             hit = false;
-        }
+        }*/
 
         float r;
 
         if (sweep !=0){
-            System.out.println(diff);
-            r = (float) ((150 + ( (450-150) * Math.pow(Math.abs( 1-Math.abs(diff/sweepDiff) ), 0.5) )) * Math.signum(sweepDiff) * delta);
+            //System.out.println(diff);
+            float p = (float) Math.pow(Math.abs( 1-Math.abs(diff/sweepDiff) ), 0.5);
 
-            if(!hit && diff>-sweepDiff-5 && diff<-sweepDiff+5) {
+            r = ((float) 150 + (450-150) * p ) * Math.signum(sweepDiff) * delta;
+
+            //r = (float) ((150 + ( (450-150) * Math.pow(Math.abs( 1-Math.abs(diff/sweepDiff) ), 0.5) )) * Math.signum(sweepDiff) * delta);
+
+            if(hit) r*=-1;
+
+            //float s = sweepDiff + sweepDiff;
+
+            //if (s > 180) s -= 360;
+            //if (s < -180) s += 360;
+            //System.out.println(s);
+            //System.out.println(diff);
+
+            if((!hit && diff>-sweepDiff-5 && diff<-sweepDiff+5) || (hit && diff>startSweep-5 && diff<startSweep+5)) {
+                /*System.out.println("Sweep done");
+                System.out.println(diff);
+                System.out.println(sweepDiff+sweep);
+                System.out.println(hit);*/
                 sweep = 0;
+                hit=false;
             }
 
             //if((sweepDiff>=0 && item.getRotation()<=-sweepDiff) || (sweepDiff<=0 && item.getRotation()>=-sweepDiff)) sweep=0;
