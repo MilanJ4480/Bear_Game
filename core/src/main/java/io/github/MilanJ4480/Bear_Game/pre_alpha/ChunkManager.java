@@ -2,8 +2,10 @@ package io.github.MilanJ4480.Bear_Game.pre_alpha;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,31 +15,42 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 public class ChunkManager {
-    TextureAtlas atlas;
-    TextureAtlas alpineAtlas;
-    TextureRegion[] rocks;
-    TextureRegion[] layers;
-    TextureRegion[] plants;
-    TextureRegion[][] alpine;
-    long seed;
+    private TextureAtlas atlas;
+    private TextureAtlas alpineAtlas;
+    private TextureAtlas deerAtlas;
+    private TextureRegion[] rocks;
+    private TextureRegion[] layers;
+    private TextureRegion[] plants;
+    private TextureRegion[][] alpine;
 
-    Weights weight;
+    private Texture alpineLog;
 
-    Array<Chunk> chunks;
-    short biome;
+    private Animation<TextureRegion> deerWalk;
 
-    Array<Enemy> enemies;
+    private long seed;
 
-    Texture deerTexture;
-    Texture leader;
+    private Weights weight;
 
-    Array<Item> items;
-    Item item;
+    private Array<Chunk> chunks;
+    private short biome;
+
+    private Array<Enemy> enemies;
+
+    private Texture deerTexture;
+    private Texture leader;
+
+    private Array<Item> items;
+    private Array<Entity> entities;
+
+    private Sound swoosh;
 
     public ChunkManager(){
         atlas = new TextureAtlas("atlas/atlas.atlas");
         alpineAtlas = new TextureAtlas("alpineAtlas/alpine.atlas");
         seed = MathUtils.random(1, Long.MAX_VALUE);
+
+        deerAtlas = new TextureAtlas("bearWalk1Atlas/deerWalk.atlas");
+        deerWalk = new Animation<>(1f/32f, deerAtlas.findRegions("deer"));
 
         layers = new TextureRegion[12];
         for(int i = 0; i < layers.length-1; i++){
@@ -114,6 +127,9 @@ public class ChunkManager {
         }*/
 
         items =  new Array<>();
+        swoosh = Gdx.audio.newSound(Gdx.files.internal("swoosh.mp3"));
+
+        alpineLog = new Texture("alpine/alpine_log1.png");
     }
 
     public float getFloor(float x, float w, float y){
@@ -205,15 +221,15 @@ public class ChunkManager {
 
         if(weight.spawn(biome)==1){
             float[] deerX = new  float[6];
-            enemies.add(new Deer(leader, x, y, 0.25f, 0.25f, 5, deerX, 0));
+            enemies.add(new Deer(deerWalk, x, y, 0.25f, 0.25f, 5, deerX, 0));
             for(int i=1; i<5; i++) {
-                enemies.add(new Deer(deerTexture, x+(i*5), y+(i*5), 0.1f, 0.1f, 5, deerX, i));
+                enemies.add(new Deer(deerWalk, x+(i*5), y+(i*5), 0.1f, 0.1f, 5, deerX, i));
             }
             System.out.println("Spawned Deer");
         }
 
         if(weight.spawnItems(biome)==1){
-            items.add(new Item(alpine[6][0], x, y));
+            items.add(new Item(alpine[6][0], x, y, swoosh));
             System.out.println("Spawned Item");
         }
 
@@ -223,9 +239,9 @@ public class ChunkManager {
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.M)){
             float[] deerX = new  float[6];
-            enemies.add(new Deer(leader, player.getX(), player.getY(), 0.25f, 0.25f, 5, deerX, 0));
+            enemies.add(new Deer(deerWalk, player.getX(), player.getY(), 0.25f, 0.25f, 5, deerX, 0));
             for(int i=1; i<5; i++) {
-                enemies.add(new Deer(deerTexture, player.getX()+(i*5), player.getY()+(i*5), 0.1f, 0.1f, 5, deerX, i));
+                enemies.add(new Deer(deerWalk, player.getX()+(i*5), player.getY()+(i*5), 0.1f, 0.1f, 5, deerX, i));
             }
         }
 
@@ -282,5 +298,6 @@ public class ChunkManager {
         alpineAtlas.dispose();
         deerTexture.dispose();
         leader.dispose();
+        deerAtlas.dispose();
     }
 }

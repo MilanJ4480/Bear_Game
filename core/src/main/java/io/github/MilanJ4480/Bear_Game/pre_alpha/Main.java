@@ -92,7 +92,7 @@ public class Main extends ApplicationAdapter {
     float stateTime = 0f;
     @Override
     public void render() {
-        ScreenUtils.clear(0.180f, 0.233f, 0.240f, 1f);
+        ScreenUtils.clear(142/255f, 212/255f, 209/255f, 1f);
         batch.setProjectionMatrix(camera.combined);
 
         float delta = Math.min(Gdx.graphics.getDeltaTime(), 1f/30f);
@@ -147,5 +147,7 @@ public class Main extends ApplicationAdapter {
         chunkManager.dispose();
         fox.dispose();
         caveTexture.dispose();
+        shapeRenderer.dispose();
+        enemy.dispose();
     }
 }

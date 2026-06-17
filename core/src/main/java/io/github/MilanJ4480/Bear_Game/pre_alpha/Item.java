@@ -41,10 +41,10 @@ public class Item {
     private boolean isHeld;
     private boolean hit;
 
-    public Item(TextureRegion texture, float x, float y) {
+    public Item(TextureRegion texture, float x, float y, Sound swoosh) {
         this.item = new Sprite(texture);
 
-        swoosh = Gdx.audio.newSound(Gdx.files.internal("swoosh.mp3"));
+        this.swoosh = swoosh;
 
 
         item.flip(true, false);
@@ -87,7 +87,7 @@ public class Item {
     public Polygon getHitbox() { return hitbox; }
     public void hit() {
         hit = true;
-        startSweep = sweepDiff + sweepDiff;
+        startSweep = sweepDiff * 2;
 
         if (startSweep > 180) startSweep -= 360;
         if (startSweep < -180) startSweep += 360;;

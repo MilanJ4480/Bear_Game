@@ -2,8 +2,10 @@ package io.github.MilanJ4480.Bear_Game.pre_alpha;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
@@ -14,10 +16,13 @@ public class Enemy{
     private Sprite entity;
     private Polygon hitbox;
     public Random rand;
+    public Animation<TextureRegion> walkAnimation;
+
+    public float stateTime;
 
     private int health;
     private int t;
-    private boolean hit;
+    public boolean hit;
 
     public float x;
     public float y;
@@ -32,8 +37,43 @@ public class Enemy{
 
 
 
+
+
     public Enemy(Texture texture, float x, float y, float w, float h, int health) {
         this.entity = new Sprite(texture);
+        this.x = x;
+        this.y = y;
+        this.g = -1000;
+        this.v=0;
+        s=100;
+        this.health = health;
+        walkAnimation = new Animation<>(1f, new TextureRegion(texture));
+
+
+
+        rand = new Random(MathUtils.random(1, Long.MAX_VALUE));
+
+
+        entity.setPosition(x, y);
+        entity.setSize(entity.getWidth()*w, entity.getHeight()*h);
+
+        float[] vertices = new float[] {
+            0, 0,
+            entity.getWidth(), 0,
+            entity.getWidth(), entity.getHeight(),
+            0, entity.getHeight()
+        };
+
+        hitbox = new Polygon(vertices);
+        hitbox.setPosition(x, y);
+
+        shapeRenderer = new ShapeRenderer();
+    }
+
+    public Enemy(Animation<TextureRegion> animation, float x, float y, float w, float h, int health) {
+        walkAnimation = animation;
+        walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
+        this.entity = new Sprite(animation.getKeyFrame(0f));
         this.x = x;
         this.y = y;
         this.g = -1000;
@@ -47,7 +87,7 @@ public class Enemy{
 
 
         entity.setPosition(x, y);
-        entity.setSize(entity.getWidth()*w, entity.getHeight()*h);
+        entity.setSize(animation.getKeyFrame(0f).getRegionWidth(), animation.getKeyFrame(0f).getRegionHeight());
 
         float[] vertices = new float[] {
             0, 0,
@@ -76,11 +116,11 @@ public class Enemy{
 
     public int getHealth() { return health; }
 
-    public void hitbox(float x, float y, float w, float h, Camera camera){
+    public void hitbox(Polygon polygon, Camera camera) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(x, y, w, h);
+        shapeRenderer.polygon(polygon.getTransformedVertices());
         shapeRenderer.end();
     }
 
@@ -96,6 +136,8 @@ public class Enemy{
             hit = true;
         }
     }
+
+    public void doFlip(TextureRegion region){}
 
     public void move(float delta, float playerX){
 
@@ -139,7 +181,7 @@ public class Enemy{
                 damageContact(swipe);
             }
             else hit = false;
-            //hitbox(x, y, getWidth(), getHeight(), camera);
+            hitbox(hitbox, camera);
 
             if(health<=0) death();
         }
@@ -148,8 +190,15 @@ public class Enemy{
 
     public void render(Batch batch) {
         if (health>0) {
+            TextureRegion region = walkAnimation.getKeyFrame(stateTime);
+            doFlip(region);
+            entity.setRegion(region);
             entity.draw(batch);
         }
+    }
+
+    public void dispose() {
+        shapeRenderer.dispose();
     }
 
 }
