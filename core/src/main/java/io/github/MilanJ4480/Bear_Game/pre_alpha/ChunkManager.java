@@ -299,5 +299,6 @@ public class ChunkManager {
         deerTexture.dispose();
         leader.dispose();
         deerAtlas.dispose();
+        alpineLog.dispose();
     }
 }
