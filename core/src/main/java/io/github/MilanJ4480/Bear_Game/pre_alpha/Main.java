@@ -92,7 +92,7 @@ public class Main extends ApplicationAdapter {
     float stateTime = 0f;
     @Override
     public void render() {
-        ScreenUtils.clear(142/255f, 212/255f, 209/255f, 1f);
+        ScreenUtils.clear(61/255f, 128/255f, 163/255f, 1f);
         batch.setProjectionMatrix(camera.combined);
 
         float delta = Math.min(Gdx.graphics.getDeltaTime(), 1f/30f);
@@ -125,18 +125,18 @@ public class Main extends ApplicationAdapter {
 
         batch.end();
 
-        hitbox(player.getPolygon());
+        //hitbox(player.getPolygon());
 
-        if (player.getAttack()) {
-            hitbox(player.getLargeSwipeBox());
-        }
+        //if (player.getAttack()) {
+        //    hitbox(player.getLargeSwipeBox());
+        //}
 
-        for(Item i : chunkManager.itemList()){
-            hitbox(i.getHitbox());
-        }
+        //for(Item i : chunkManager.itemList()){
+        //    hitbox(i.getHitbox());
+        //}
 
-        hitbox(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
-        hitbox(entity.getPolygon());
+        //hitbox(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+        //hitbox(entity.getPolygon());
     }
 
     @Override

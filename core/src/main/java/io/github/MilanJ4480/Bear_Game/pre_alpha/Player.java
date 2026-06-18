@@ -158,8 +158,8 @@ public class Player{
 
     public void update(float f, float delta) {
         floor = f;
-        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=750;
-        else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=175;
+        //if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=750;
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) bearS=200;
         else bearS=75;
         if ((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) && bearAnimation==bearWalk1 && !holding){
             swapAnimation(bearSwipe, false);

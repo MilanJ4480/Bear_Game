@@ -181,7 +181,7 @@ public class Enemy{
                 damageContact(swipe);
             }
             else hit = false;
-            hitbox(hitbox, camera);
+            //hitbox(hitbox, camera);
 
             if(health<=0) death();
         }

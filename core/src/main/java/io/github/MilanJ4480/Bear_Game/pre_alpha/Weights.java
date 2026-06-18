@@ -117,7 +117,7 @@ public class Weights {
     }
 
     public int spawn(int biome){
-        int x = rand.nextInt(50);
+        int x = rand.nextInt(40);
 //        System.out.println(biome + " " + x);
         if(biome==4 && x==0) return rand.nextInt(2);
         else return -1;
